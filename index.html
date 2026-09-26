@@ -141,7 +141,7 @@ tr.tr-day td.pts-total{background:var(--primary-dark);font-size:11px;font-weight
 .update-toast button{background:#fff;color:#0f4a28;border:none;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Amiri',serif!important;white-space:nowrap}
 </style>
 <script>
-window.APP_VERSION = "2026.09.26.1";
+window.APP_VERSION = "2026.09.26.2";
 </script>
 </head>
 <body>
@@ -160,7 +160,7 @@ window.APP_VERSION = "2026.09.26.1";
     <div class="sec-title">القرآن</div>
     <div class="row"><span>قراءة ١٠ صفحات قرآن</span><span>10 نقاط</span></div>
     <div class="sec-title">الصلاة</div>
-    <div class="row"><span>كل صلاة مفروضة مع سنتها</span><span>2 نقطة</span></div>
+    <div class="row"><span>كل صلاة مفروضة مع سنتها</span><span>5 نقاط</span></div>
     <div style="font-size:9px;color:var(--mu);line-height:1.7;margin:3px 8px">الفجر: ركعتان قبليتان — الظهر: ركعتان قبليتان وركعتان بعديتان — العصر: ركعتان قبليتان — المغرب والعشاء: ركعتان بعديتان.</div>
     <div style="font-size:9px;color:var(--gold);line-height:1.7;margin:5px 8px">تظهر البدائل تحت كل عبادة داخل الجدول.</div>
   </div>
@@ -172,14 +172,6 @@ window.APP_VERSION = "2026.09.26.1";
 </div>
 <div class="nr"><label>الاسم:</label><input type="text" id="userName" placeholder="اسمك هنا..."/></div>
 <div id="statusBar" class="status-bar"></div>
-<div class="how-box" id="goalsBox">
-  <div class="how-hdr" onclick="toggleGoals()" style="background:var(--gold)"><span>🎯 حددي كميتك من هذه العبادات</span><span id="goalsArr">▼</span></div>
-  <div class="how-body" id="goalsBody" style="padding:14px">
-    <div style="font-size:11px;color:var(--mu);margin-bottom:12px;background:#fff8e1;border-radius:8px;padding:8px 10px;border:1px solid #f0c040;line-height:1.7">حددي هدفك الشخصي لكل عبادة — الكمية الأساسية هي المعتمدة لحساب المعدل من 100، وأي زيادة تُحسب بونص إضافي ⭐</div>
-    <div id="goalsRows"></div>
-    <div style="font-size:10px;color:var(--mu);text-align:center;margin-top:8px;background:#e8f6ee;border-radius:6px;padding:6px">الهدف يُطبَّق على الأيام العشرة — يمكنك تعديل يوم بعينه من داخل الجدول</div>
-  </div>
-</div>
 <div class="tw"><table>
   <thead><tr>
     <th class="tc">الفئة</th><th class="ti">العبادة</th><th class="tp">نقاط</th>
@@ -262,11 +254,11 @@ const ROWS=[
   {cat:'الأذكار',ibada:'أذكار الصباح',pts:5,fixed:true},
   {cat:'الأذكار',ibada:'أذكار المساء',pts:5,fixed:true},
   {cat:'القرآن',ibada:'قراءة ١٠ صفحات قرآن',pts:10,fixed:true,badil:'أسماء الله الحسنى ٣ مرات'},
-  {cat:'الصلاة',ibada:'صلاة الفجر وسنتها',pts:2,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة الظهر وسنتها',pts:2,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة العصر وسنتها',pts:2,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة المغرب وسنتها',pts:2,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة العشاء وسنتها',pts:2,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'صلاة الفجر وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'صلاة الظهر وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'صلاة العصر وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'صلاة المغرب وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'صلاة العشاء وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
 ];
 
 const IBADA_NOTES={
@@ -281,16 +273,12 @@ const DAYS=10,SK='ibada_v14',NK='ibada_name_v14',EDITK='ibada_edit_v14',COUNTERK
 let state={},editedPts={},counterVal=0,personalGoals={};
 
 const GOAL_ITEMS=[];
-const VARIABLE_BONUS_ROWS=new Set();
 const EDITABLE_BASIC_ROWS=new Set();
 const DHIKR_ROWS=new Set();
 const sk=(r,d)=>r+'-'+d;
 
 function calcPtsTotal(){
-  return ROWS.reduce((sum,r,ri)=>{
-    if(r.bonus||r.negative)return sum;
-    return sum+(r.pts>0?r.pts:0);
-  },0);
+  return ROWS.reduce((sum,r)=>sum+Math.max(0,r.pts),0);
 }
 
 function load(){
@@ -403,17 +391,6 @@ function confirmReset(){
 }
 
 function getPts(ri,d){
-  const key=ri+'_'+d;
-  if(EDITABLE_BASIC_ROWS.has(ri))return editedPts[key]!==undefined?Math.max(0,Math.min(Number(editedPts[key])||0,ROWS[ri].pts)):ROWS[ri].pts;
-  if(ROWS[ri].fixed||ROWS[ri].bonus||!VARIABLE_BONUS_ROWS.has(ri))return ROWS[ri].pts;
-  if(editedPts[key]!==undefined)return DHIKR_ROWS.has(ri)?Math.max(0,Math.min(30,Number(editedPts[key])||0)):editedPts[key];
-  const goalItem=GOAL_ITEMS.find(g=>g.ri===ri);
-  if(goalItem){
-    const goalVal=getGoalVal(ri);
-    if(goalItem.fixedPts){const idx=goalItem.optVals.indexOf(goalVal);if(idx>=0)return goalItem.fixedPts[idx];}
-    if(ri===8)return Math.floor(goalVal/2)*2;
-    return Math.round((goalVal/goalItem.base)*ROWS[ri].pts);
-  }
   return ROWS[ri].pts;
 }
 
@@ -422,7 +399,7 @@ function applyCell(td,v,ri,d){
   if(v===1){
     td.classList.add('done');
     const defPts=ROWS[ri].pts,curPts=getPts(ri,d);
-    const isFixed=!EDITABLE_BASIC_ROWS.has(ri)&&(ROWS[ri].fixed||ROWS[ri].bonus||!VARIABLE_BONUS_ROWS.has(ri));
+    const isFixed=true;
     const isUp=!isFixed&&curPts>defPts,isDown=!isFixed&&curPts<defPts;
     const inner=document.createElement('div');inner.className='cell-inner';
     const svgNS='http://www.w3.org/2000/svg';
@@ -483,14 +460,12 @@ function build(){
     }else if(r.badil){
       badilHtml='<div style="color:#b8860b;font-size:9px;line-height:1.4;margin-top:2px">🔄 بديل: '+r.badil+'</div>';
     }
-    const bonusHtml=r.bonus?'<div style="color:#b8860b;font-size:9px;font-weight:700;margin-top:2px">⭐ بونص</div>':'';
     const pdfHtml=r.pdfLink?'<button class="pdf-btn" onclick="openPdf(\''+r.pdfLink+'\',\''+r.pdfTitle+'\')">📄 افتحي الملف</button>':'';
     if(r.negative){ti.innerHTML='<div style="color:#ef4444">'+r.ibada+'</div>'+noteHtml+badilHtml;}
-    else{ti.innerHTML='<div>'+r.ibada+'</div>'+noteHtml+badilHtml+bonusHtml+pdfHtml;}
+    else{ti.innerHTML='<div>'+r.ibada+'</div>'+noteHtml+badilHtml+pdfHtml;}
     tr.appendChild(ti);
     const tp=document.createElement('td');tp.className='pc';
     if(r.negative)tp.style.color='#ef4444';
-    else if(r.bonus)tp.style.color='#b8860b';
     tp.textContent=r.pts;
     tr.appendChild(tp);
     for(let d=1;d<=DAYS;d++){
@@ -503,51 +478,28 @@ function build(){
   });
 
   const tf=document.createElement('tr');tf.className='tr-day';
-  const lbl=document.createElement('td');lbl.className='lbl';lbl.colSpan=2;lbl.textContent='مجموع اليوم (أساسي)';tf.appendChild(lbl);
+  const lbl=document.createElement('td');lbl.className='lbl';lbl.colSpan=2;lbl.textContent='مجموع اليوم';tf.appendChild(lbl);
   const ptsTd=document.createElement('td');ptsTd.className='pts-total';ptsTd.textContent=calcPtsTotal();tf.appendChild(ptsTd);
   for(let d=1;d<=DAYS;d++){const td=document.createElement('td');td.id='dt'+d;tf.appendChild(td);}
   tb.appendChild(tf);
 
-  const tb2=document.createElement('tr');
-  const blbl=document.createElement('td');blbl.colSpan=2;blbl.textContent='⭐ بونص اليوم';blbl.style.cssText='background:#fff3cd;color:#7a5c00;font-size:11px;font-weight:700;text-align:right;padding-right:8px;border-top:1px solid #f0c040';tb2.appendChild(blbl);
-  const bEmpty=document.createElement('td');bEmpty.style.cssText='background:#fff3cd;border:1px solid #f0c040;font-size:10px;color:#b8860b;text-align:center';bEmpty.textContent='⭐';tb2.appendChild(bEmpty);
-  for(let d=1;d<=DAYS;d++){const td=document.createElement('td');td.id='dbonus'+d;td.style.cssText='background:#fffde7;color:#b8860b;font-weight:700;font-size:11px;text-align:center;border:1px solid #f0c040;padding:3px 1px';tb2.appendChild(td);}
-  tb.appendChild(tb2);
   buildDayPctRow(tb);recalc();
 }
 
 function getBasePtsForCell(ri,d){
-  if(ROWS[ri].bonus)return 0;
-  if(ri===8)return (state[sk(8,d)]||0)===1?2:0;
-  const key=ri+'_'+d,originalPts=ROWS[ri].pts;
-  if(EDITABLE_BASIC_ROWS.has(ri))return editedPts[key]!==undefined?Math.max(0,Math.min(Number(editedPts[key])||0,originalPts)):originalPts;
-  if(!VARIABLE_BONUS_ROWS.has(ri))return originalPts;
-  if(editedPts[key]!==undefined)return Math.min(editedPts[key],originalPts);
-  return originalPts;
-}
-function getBonusPtsForCell(ri,d){
-  if(ri===8){if((state[sk(8,d)]||0)!==1)return 0;return Math.max(0,getPts(8,d)-2);}
-  if(ROWS[ri].bonus)return ROWS[ri].pts;
-  if(!VARIABLE_BONUS_ROWS.has(ri))return 0;
-  const key=ri+'_'+d,originalPts=ROWS[ri].pts;
-  if(editedPts[key]!==undefined)return Math.max(0,getPts(ri,d)-originalPts);
-  const goalItem=GOAL_ITEMS.find(g=>g.ri===ri);
-  if(!goalItem)return 0;
-  return Math.max(0,getPts(ri,d)-originalPts);
+  return ROWS[ri].pts;
 }
 function getDayBase(d){let t=0;ROWS.forEach((r,ri)=>{if((state[sk(ri,d)]||0)===1)t+=getBasePtsForCell(ri,d);});return t;}
-function getDayBonus(d){let t=0;ROWS.forEach((r,ri)=>{if((state[sk(ri,d)]||0)===1)t+=getBonusPtsForCell(ri,d);});return t;}
-function getDayTotals(){return Array.from({length:DAYS},(_,i)=>getDayBase(i+1)+getDayBonus(i+1));}
-function calcDayMax(){return ROWS.reduce((s,r,ri)=>s+((r.pts>0&&!r.bonus&&!r.negative)?r.pts:0),0);}
+function getDayTotals(){return Array.from({length:DAYS},(_,i)=>getDayBase(i+1));}
+function calcDayMax(){return ROWS.reduce((sum,r)=>sum+Math.max(0,r.pts),0);}
 
 function recalc(){
-  let grandBase=0,grandBonus=0;
+  let grandBase=0;
   for(let d=1;d<=DAYS;d++){
-    const base=getDayBase(d),bonus=getDayBonus(d);grandBase+=base;grandBonus+=bonus;
+    const base=getDayBase(d);grandBase+=base;
     const elBase=document.getElementById('dt'+d);if(elBase)elBase.textContent=base||'';
-    const elBonus=document.getElementById('dbonus'+d);if(elBonus)elBonus.textContent=bonus>0?'+'+bonus:'';
   }
-  const grand=grandBase+grandBonus+counterVal*5;
+  const grand=grandBase+counterVal*5;
   document.getElementById('grandVal').textContent=grand;
   let filled=0;for(let d=1;d<=DAYS;d++)if(ROWS.some((_,ri)=>(state[sk(ri,d)]||0)!==0))filled++;
   document.getElementById('filledVal').textContent=filled+'/'+DAYS;
@@ -571,7 +523,7 @@ async function sendToManager(){
   let filled=0;for(let d=1;d<=DAYS;d++)if(ROWS.some((_,ri)=>(state[sk(ri,d)]||0)!==0))filled++;
   const avg=filled>0?(grand/filled).toFixed(1):'—';
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({name,grand,avg,filled,dayTotals:dt,state,editedPts,counter:counterVal,personalGoals})});
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({name,grand,avg,filled,dayTotals:dt,dayBase:dt,state,editedPts,counter:counterVal,personalGoals})});
     const bar=document.getElementById('statusBar');bar.style.display='block';bar.className='status-bar ok';bar.textContent='✓ تم إرسال نتائجك بنجاح!';showToast('تم الإرسال ✓');
   }catch(e){const bar=document.getElementById('statusBar');bar.style.display='block';bar.className='status-bar ok';bar.textContent='✓ تم إرسال نتائجك بنجاح!';showToast('تم الإرسال ✓');}
   btn.textContent='☁️ إرسال نتائجي';btn.disabled=false;
