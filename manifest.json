@@ -1,0 +1,20 @@
+{
+  "name": "برنامج عبادة",
+  "short_name": "عبادة",
+  "description": "برنامج متابعة العبادة",
+  "start_url": "./girl.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fdfaf5",
+  "theme_color": "#1a6b3c",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "2048x2048",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
