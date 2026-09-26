@@ -81,8 +81,6 @@ body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:
 .custom-title{font-size:10px;font-weight:700;color:#856404;margin-bottom:5px}
 .chips{display:flex;flex-wrap:wrap;gap:4px}
 .chip{background:#fff;border:1px solid #f0c040;color:#856404;font-size:10px;padding:2px 8px;border-radius:10px}
-.bonus-box{margin-bottom:9px;background:#fffde7;border:1px solid #f0c040;border-radius:10px;padding:8px 10px}
-.bonus-title{font-size:10px;font-weight:700;color:#b8860b;margin-bottom:5px}
 .detail-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
 .detail-table th{background:var(--gD);color:#fff;padding:5px 1px;border:1px solid var(--gDD);font-size:8.5px}
 .detail-table th.catH{width:18px}.detail-table th.ibH{width:28%}.detail-table th.ptsH{width:22px}.detail-table th.dayH{width:5.5%}
@@ -120,7 +118,7 @@ body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:
     <div class="sec-title">القرآن</div>
     <div class="row"><span>قراءة ١٠ صفحات قرآن</span><span>10 نقاط</span></div>
     <div class="sec-title">الصلاة</div>
-    <div class="row"><span>كل صلاة مفروضة مع سنتها</span><span>2 نقطة</span></div>
+    <div class="row"><span>كل صلاة مفروضة مع سنتها</span><span>5 نقاط</span></div>
     <div style="font-size:9px;color:var(--mu);line-height:1.7;margin:3px 8px">الفجر: ركعتان قبليتان — الظهر: ركعتان قبليتان وركعتان بعديتان — العصر: ركعتان قبليتان — المغرب والعشاء: ركعتان بعديتان.</div>
   </div>
 </div>
@@ -160,16 +158,15 @@ const ROWS=[
   {cat:'الأذكار',ibada:'أذكار الصباح',pts:5,fixed:true},
   {cat:'الأذكار',ibada:'أذكار المساء',pts:5,fixed:true},
   {cat:'القرآن',ibada:'قراءة ١٠ صفحات قرآن',pts:10,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة الفجر وسنتها',pts:2,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة الظهر وسنتها',pts:2,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة العصر وسنتها',pts:2,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة المغرب وسنتها',pts:2,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة العشاء وسنتها',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'صلاة الفجر وسنتها',pts:5,fixed:true},
+  {cat:'الصلاة',ibada:'صلاة الظهر وسنتها',pts:5,fixed:true},
+  {cat:'الصلاة',ibada:'صلاة العصر وسنتها',pts:5,fixed:true},
+  {cat:'الصلاة',ibada:'صلاة المغرب وسنتها',pts:5,fixed:true},
+  {cat:'الصلاة',ibada:'صلاة العشاء وسنتها',pts:5,fixed:true},
 ];
 
 const GOAL_LABELS={};
 const GOAL_UNITS={};
-const VARIABLE_BONUS_ROWS=new Set();
 const EDITABLE_BASIC_ROWS=new Set();
 const DHIKR_ROWS=new Set();
 const CAT_ORDER=['الأذكار','القرآن','الصلاة'];
@@ -191,71 +188,15 @@ function loadPairGroups(){
 }
 
 function getPts(g,ri,d){
-  const key=ri+'_'+d;
-  const ep=g.editedPts||{};
-  if(EDITABLE_BASIC_ROWS.has(ri))return ep[key]!==undefined?Math.max(0,Math.min(Number(ep[key])||0,ROWS[ri].pts)):ROWS[ri].pts;
-  if(ROWS[ri].fixed||ROWS[ri].bonus||!VARIABLE_BONUS_ROWS.has(ri))return ROWS[ri].pts;
-  if(ep[key]!==undefined)return DHIKR_ROWS.has(ri)?Math.max(0,Math.min(30,Number(ep[key])||0)):(Number(ep[key])||0);
-  // هدف شخصي لركعات القيام (ri=8)
-  const goals=g.personalGoals||{};
-  if(ri===8&&goals[8]!==undefined)return Math.floor(Number(goals[8])/2)*2;
-  // باقي العبادات ذات الأهداف
-  if(goals[ri]!==undefined)return calcGoalPts(ri,goals[ri]);
   return ROWS[ri].pts;
 }
 
 function getBasePts(g,ri,d){
-  if(ROWS[ri].bonus)return 0;
-  if(ri===8){
-    // أساسي ركعتين = 2 نقطة
-    return ((g.state||{})[sk(ri,d)]||0)===1 ? 2 : 0;
-  }
-  const key=ri+'_'+d;
-  const ep=g.editedPts||{};
-  const orig=ROWS[ri].pts;
-  if(EDITABLE_BASIC_ROWS.has(ri))return ep[key]!==undefined?Math.max(0,Math.min(Number(ep[key])||0,orig)):orig;
-  if(!VARIABLE_BONUS_ROWS.has(ri))return orig;
-  if(ep[key]!==undefined)return Math.min(Number(ep[key])||0,orig);
-  return orig;
-}
-
-function getBonusPts(g,ri,d){
-  if(ROWS[ri].bonus)return ROWS[ri].pts; // ركعتين تسابيح وطلب علم
-  if(!VARIABLE_BONUS_ROWS.has(ri))return 0;
-  if(ri===8){
-    if(((g.state||{})[sk(ri,d)]||0)!==1)return 0;
-    return Math.max(0,getPts(g,ri,d)-2);
-  }
-  const key=ri+'_'+d;
-  const ep=g.editedPts||{};
-  const orig=ROWS[ri].pts;
-  if(ep[key]!==undefined)return Math.max(0,getPts(g,ri,d)-orig);
-  const goals=g.personalGoals||{};
-  if(goals[ri]!==undefined)return Math.max(0,calcGoalPts(ri,goals[ri])-orig);
-  return 0;
-}
-
-function calcGoalPts(ri,goalVal){
-  if(ri===15||ri===16||ri===17)goalVal=Math.max(200,Math.min(600,Number(goalVal)||200));
-  if(ri===3){
-    if(Number(goalVal)===1.5)return 15;
-    if(Number(goalVal)===3)return 20;
-    return 10;
-  }
-  if(ri===8)return Math.floor(Number(goalVal)/2)*2;
-  const orig=ROWS[ri].pts;
-  const baseVals={4:1,10:4,11:2,15:200,16:200,17:200};
-  const base=baseVals[ri]||1;
-  return Math.round((Number(goalVal)/base)*orig);
+  return ROWS[ri].pts;
 }
 
 function calcDayMax(){
-  // الأساسي = كل العبادات بدون bonus وبدون negative، ركعات القيام أساسها 2
-  return ROWS.reduce((s,r,ri)=>{
-    if(r.bonus||r.negative)return s;
-    if(ri===8)return s+2;
-    return s+(r.pts>0?r.pts:0);
-  },0);
+  return ROWS.reduce((sum,r)=>sum+Math.max(0,r.pts),0);
 }
 
 function rowEarned(g,ri){let t=0;for(let d=1;d<=DAYS;d++)if(((g.state||{})[sk(ri,d)]||0)===1)t+=getPts(g,ri,d);return t;}
@@ -273,7 +214,7 @@ function calcGirlDayPct(g){
     const hasData=ROWS.some((_,ri)=>((g.state||{})[sk(ri,d)]||0)!==0);
     if(!hasData)continue;
     count++;
-    // نحسب الأساسي يدوياً (موحّد مع girl.html)
+    // نحسب مجموع اليوم يدوياً (موحّد مع girl.html)
     let base=0;
     ROWS.forEach((r,ri)=>{if(((g.state||{})[sk(ri,d)]||0)===1)base+=getBasePts(g,ri,d);});
     baseSum+=base;
@@ -285,10 +226,6 @@ function calcGirlDayPct(g){
 function calcGirlDayBase(g,d){
   let t=0;ROWS.forEach((r,ri)=>{if(((g.state||{})[sk(ri,d)]||0)===1)t+=getBasePts(g,ri,d);});return t;
 }
-function calcGirlDayBonus(g,d){
-  let t=0;ROWS.forEach((r,ri)=>{if(((g.state||{})[sk(ri,d)]||0)===1)t+=getBonusPts(g,ri,d);});return t;
-}
-
 function loadGirlsFromScript(){
   return new Promise((resolve,reject)=>{
     const callbackName='ibadahCallback_'+Date.now()+'_'+Math.floor(Math.random()*100000);
@@ -415,7 +352,7 @@ function perIbadaRanking(){
     ROWS.forEach((r,ri)=>{
       if(r.cat!==cat||r.negative)return;
       const ranked=girlsData.map(g=>({name:g.name,total:rowEarned(g,ri)})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
-      html+='<div class="ibada-rank"><div class="ibada-rank-title">'+esc(r.ibada)+(r.bonus?' ⭐':'')+'</div>';
+      html+='<div class="ibada-rank"><div class="ibada-rank-title">'+esc(r.ibada)+'</div>';
       if(!ranked.length)html+='<span style="font-size:10px;color:#aaa">لا يوجد إنجاز بعد</span>';
       ranked.forEach((x,i)=>{const rnk=1+ranked.filter((_,j)=>j<i&&ranked[j].total>x.total).length;html+='<span class="rank-chip '+(rnk===1?'first':'')+'">'+(rnk<=3?rankMedal(rnk):rnk+'.')+' <b>'+esc(x.name)+'</b> <span style="color:var(--gD);font-weight:700">'+x.total+'</span></span>';});
       html+='</div>';
@@ -431,9 +368,6 @@ function girlCard(g,gi,sorted,maxG){
   const medal=rankMedal(rank);
   const dt=g.dayTotals||Array(DAYS).fill(0);
   const dayPct=calcGirlDayPct(g);
-  let totalBase=0,totalBonus=0;
-  for(let d=1;d<=DAYS;d++){totalBase+=calcGirlDayBase(g,d);totalBonus+=calcGirlDayBonus(g,d);}
-  totalBase+=counterPoints(g);
   const dots=dt.map((v,i)=>'<div class="dd '+(v>0?'f':'e')+'"><div class="dn">'+(i+1)+'</div>'+(v>0?v:'')+'</div>').join('');
   const goals=g.personalGoals||{};
   const visibleGoals=Object.entries(goals).filter(([ri])=>GOAL_LABELS[ri]);
@@ -448,11 +382,8 @@ function girlCard(g,gi,sorted,maxG){
       else if([15,16,17].includes(Number(ri))){shownVal=(Number(val)/2)+' صباحاً + '+(Number(val)/2)+' مساءً';}
       return '<span class="chip">'+esc(label)+': '+esc(shownVal)+'</span>';
     }).join('')+'</div></div>':'';
-  const bonusHtml=totalBonus>0?
-    '<div class="bonus-box"><div class="bonus-title">⭐ البونص الكلي: '+totalBonus+' نقطة</div>'+
-    '<div style="font-size:10px;color:#7a6a52">المجموع الأساسي: '+totalBase+' | البونص: +'+totalBonus+'</div></div>':'';
   const pctColor=dayPct!==null?(dayPct>=80?'#1a6b3c':dayPct>=50?'#b8860b':'#c0392b'):'#aaa';
-  const pctBadge=dayPct!==null?'<div style="text-align:center;background:#e8f6ee;border:1px solid var(--bd);border-radius:10px;padding:6px 10px;margin-bottom:8px"><div style="font-size:18px;font-weight:700;color:'+pctColor+'">'+dayPct+'%</div><div style="font-size:9px;color:var(--mu)">معدل اليوم من 100 (أساسي فقط)</div></div>':'';
+  const pctBadge=dayPct!==null?'<div style="text-align:center;background:#e8f6ee;border:1px solid var(--bd);border-radius:10px;padding:6px 10px;margin-bottom:8px"><div style="font-size:18px;font-weight:700;color:'+pctColor+'">'+dayPct+'%</div><div style="font-size:9px;color:var(--mu)">معدل اليوم من 100</div></div>':'';
   const pctLabel=dayPct!==null?'<span style="background:#e8f6ee;border:1px solid var(--bd);border-radius:8px;padding:2px 8px;font-size:11px;font-weight:700;color:'+pctColor+'">📊 '+dayPct+'%</span>':'';
   const body=detailsTable(g)+'<div style="font-size:10px;color:var(--mu);margin-top:8px;text-align:left">آخر إرسال: '+esc(g.lastUpdate||'—')+'</div>';
   return '<div class="girl-card">'
@@ -461,7 +392,7 @@ function girlCard(g,gi,sorted,maxG){
     +'<div style="display:flex;align-items:center;gap:6px">'+pctLabel+'<div class="gc-pts">'+g.grand+' نقطة</div><span id="garr_'+gi+'" style="color:#a8e6c0;font-size:12px">▼</span></div>'
     +'</div>'
     +'<div class="gc-body" id="gbody_'+gi+'" style="display:none">'
-    +pctBadge+goalsHtml+bonusHtml
+    +pctBadge+goalsHtml
     +'<div class="prog-row"><span>التقدم الكلي</span><span>'+pct+'%</span></div><div class="prog-t"><div class="prog-f" style="width:'+pct+'%"></div></div>'
     +'<div class="days-row">'+dots+'</div>'
     +'<button class="toggle-btn" onclick="toggleDetails('+gi+',this)"><span>عرض تفاصيل العبادات</span><span>▼</span></button>'
@@ -478,27 +409,21 @@ function detailsTable(g){
   ROWS.forEach((r,ri)=>{
     let earned=0;html+='<tr>';
     if(r.cat!==lastCat){html+='<td class="cat" rowspan="'+catRows[r.cat]+'">'+esc(r.cat)+'</td>';lastCat=r.cat;}
-    const meta=[r.note,r.bonus?'⭐ بونص':''].filter(Boolean).join(' | ');
-    const ptsLabel=ri===8?'2+':''+r.pts;
-    html+='<td class="ibada" style="'+(r.negative?'color:#ef4444':'')+(r.bonus?'color:#b8860b':'')+'">'+esc(r.ibada)+(meta?'<div style="font-size:8px;color:#b8860b;font-weight:400">'+esc(meta)+'</div>':'')+'</td>';
-    html+='<td style="'+(r.negative?'color:#ef4444':'')+(r.bonus?'color:#b8860b':'')+'">'+ptsLabel+'</td>';
+    const meta=r.note||'';
+    const ptsLabel=''+r.pts;
+    html+='<td class="ibada" style="'+(r.negative?'color:#ef4444':'')+'">'+esc(r.ibada)+(meta?'<div style="font-size:8px;color:#b8860b;font-weight:400">'+esc(meta)+'</div>':'')+'</td>';
+    html+='<td style="'+(r.negative?'color:#ef4444':'')+'">'+ptsLabel+'</td>';
     for(let d=1;d<=DAYS;d++){
       const v=(g.state&&g.state[sk(ri,d)])||0;
       const dpts=getPts(g,ri,d);
-      const bonus=getBonusPts(g,ri,d);
       if(v===1)earned+=dpts;
       let mark=v===1?'✓':v===2?'✗':'';
-      let arrow='';
-      if(v===1&&!r.bonus){if(bonus>0)arrow='↑';else if(g.editedPts&&g.editedPts[ri+'_'+d]!==undefined&&dpts<r.pts)arrow='↓';}
-      html+='<td><span class="id '+(v===1?'d':v===2?'m':'e')+'" title="'+(v===1?dpts+' نقطة'+(bonus>0?' (بونص: +'+bonus+')':''):'')+'">'+mark+arrow+'</span></td>';
+      html+='<td><span class="id '+(v===1?'d':v===2?'m':'e')+'" title="'+(v===1?dpts+' نقطة':'')+'">'+mark+'</span></td>';
     }
-    html+='<td><b style="'+(r.negative?'color:#ef4444':'')+(r.bonus?'color:#b8860b':'')+'">'+earned+'</b></td></tr>';
+    html+='<td><b style="'+(r.negative?'color:#ef4444':'')+'">'+earned+'</b></td></tr>';
   });
-  html+='<tr style="background:var(--gD);color:#fff;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px;background:var(--gDD)">مجموع أساسي</td>';
+  html+='<tr style="background:var(--gD);color:#fff;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px;background:var(--gDD)">مجموع اليوم</td>';
   for(let d=1;d<=DAYS;d++){html+='<td>'+calcGirlDayBase(g,d)+'</td>';}
-  html+='<td></td></tr>';
-  html+='<tr style="background:#fffde7;color:#b8860b;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px;border:1px solid #f0c040">⭐ بونص</td>';
-  for(let d=1;d<=DAYS;d++){const b=calcGirlDayBonus(g,d);html+='<td style="border:1px solid #f0c040">'+(b>0?'+'+b:'')+'</td>';}
   html+='<td></td></tr>';
   html+='<tr style="background:#fffdf0;color:#856404;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px">عداد التسميع</td><td colspan="10">'+(Number(g.counter)||0)+' مرة = '+counterPoints(g)+' نقطة</td><td></td></tr>';
   html+='<tr style="background:#e8f6ee;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px;color:var(--gDD);border-top:2px solid var(--gM)">معدل اليوم %</td>';
