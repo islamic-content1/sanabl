@@ -99,13 +99,13 @@ body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:
 .worship-status{border:1px solid var(--bd);border-radius:11px;padding:10px;margin-top:8px;background:#fff}.worship-status-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.worship-status-name{font-size:12px;font-weight:800;color:var(--tx)}.done-count{background:#dff5e8;color:var(--gDD);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:800;white-space:nowrap}
 .status-line{font-size:10px;line-height:1.8;padding:5px 7px;border-radius:7px;margin-top:4px}.status-line.done{background:#edf9f2;color:var(--gDD)}.status-line.missed{background:#fff0f0;color:var(--rD)}.status-line.pending{background:#f5f2ec;color:var(--mu)}.status-label{font-weight:800}
 </style>
-<link rel="manifest" href="manifest.json?v=2026.09.26.1">
+<link rel="manifest" href="manifest-manager.json?v=2026.09.27.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="النتائج">
+<meta name="apple-mobile-web-app-title" content="مسؤولة العبادة">
 <meta name="theme-color" content="#1a6b3c">
-<link rel="apple-touch-icon" href="icon.png?v=2026.09.26.1">
+<link rel="apple-touch-icon" href="icon.png?v=2026.09.27.1">
 </head>
 <body>
 <div class="hdr"><div class="bsm">بسم الله الرحمن الرحيم</div><h1>🌙 النتائج</h1><p>أداء البنات في برنامج العبادة</p></div>
@@ -533,6 +533,13 @@ function exportExcel(){
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 buildPairGroups();
 loadData();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js?v=2026.09.27.1').catch(function () {});
+  });
+}
 </script>
 </body>
 </html>
