@@ -1,10 +1,11 @@
-const CACHE_VERSION = 'ibadah-2026.09.26.1';
+const CACHE_VERSION = 'ibadah-2026.09.27.1';
 const APP_SHELL = [
   './',
   './index.html',
   './girl.html',
   './manager.html',
   './manifest.json',
+  './manifest-manager.json',
   './icon.png'
 ];
 
