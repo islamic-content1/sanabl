@@ -1,6 +1,6 @@
 {
   "name": "برنامج عبادة - المسؤولة",
-  "short_name": "المسؤولة",
+  "short_name": "نتائج",
   "description": "صفحة المسؤولة لمتابعة نتائج برنامج العبادة",
   "id": "./manager.html",
   "start_url": "./manager.html",
