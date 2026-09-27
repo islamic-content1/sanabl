@@ -2,6 +2,7 @@
   "name": "برنامج عبادة",
   "short_name": "عبادة",
   "description": "برنامج متابعة العبادة",
+  "id": "./girl.html",
   "start_url": "./girl.html",
   "scope": "./",
   "display": "standalone",
@@ -18,3 +19,4 @@
     }
   ]
 }
+
