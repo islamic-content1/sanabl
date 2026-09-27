@@ -1,0 +1,21 @@
+{
+  "name": "برنامج عبادة - المسؤولة",
+  "short_name": "المسؤولة",
+  "description": "صفحة المسؤولة لمتابعة نتائج برنامج العبادة",
+  "id": "./manager.html",
+  "start_url": "./manager.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fdfaf5",
+  "theme_color": "#1a6b3c",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "2048x2048",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
