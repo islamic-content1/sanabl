@@ -1,7 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-  
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -9,150 +7,265 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>برنامج عبادة</title>
+<script>
+// تطبيق الوضع (ليلي/نهاري) قبل رسم الصفحة لتجنب الوميض
+(function(){var t='light';try{t=localStorage.getItem('ibada_theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');}catch(e){}document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
+/* ===== ألوان الوضع النهاري ===== */
 :root{
+  --primary:#1a6b3c;--primary-dark:#0f4a28;--primary-light:#e8f6ee;--primary-soft:#b9e2c9;
   --gL:#d4f4e2;--gM:#5cb87a;--gD:#1a6b3c;--gDD:#0f4a28;
-  --rL:#fcd5d5;--rM:#e07a7a;--rD:#c0392b;--gold:#b8860b;
-  --bg:#fdfaf5;--sf:#ffffff;--bd:#e2d9c8;--tx:#2c2416;--mu:#7a6a52;
-  --primary:#1a6b3c;--primary-dark:#0f4a28;--primary-light:#e8f6ee;
-  --done-bg:#d4f4e2;--done-border:#5cb87a;--done-text:#1a6b3c;
-  --miss-bg:#fcd5d5;--miss-border:#e07a7a;--miss-text:#c0392b;
-  --edit-color:#b8860b;--sh:0 2px 12px rgba(0,0,0,.08);
+  --th-bg:#1a6b3c;--th-bg2:#0f4a28;
+  --gold:#b8860b;--gold-bright:#d4a017;
+  --bg:#f6f3ec;--sf:#ffffff;--sf2:#faf8f3;--bd:#e7dfcf;--cell-bd:#ece5d8;--tx:#2c2416;--mu:#7a6a52;
+  --done-bg:#d9f3e3;--done-border:#5cb87a;--done-text:#1a6b3c;
+  --miss-bg:#fbe1e1;--miss-border:#e07a7a;--miss-text:#c0392b;
+  --danger:#e04848;
+  --hdr-from:#0f4a28;--hdr-to:#1f7a46;
+  --track:#e3ece4;
+  --sh:0 1px 2px rgba(30,40,30,.04),0 6px 20px rgba(30,40,30,.06);
+  --sh-lg:0 16px 48px rgba(0,0,0,.2);
+  --overlay:rgba(15,25,20,.5);
+  --radius:16px;
+  color-scheme:light;
 }
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Amiri',serif!important}
+/* ===== ألوان الوضع الليلي ===== */
+[data-theme="dark"]{
+  --primary:#2f9e5e;--primary-dark:#1b5e38;--primary-light:#1a2e22;--primary-soft:#2a5a3d;
+  --gL:#1d4630;--gM:#3f9a65;--gD:#2f9e5e;--gDD:#1b5e38;
+  --th-bg:#174d2f;--th-bg2:#103a23;
+  --gold:#e3b54f;--gold-bright:#f0c95e;
+  --bg:#0e1411;--sf:#161f1a;--sf2:#1b2620;--bd:#2a3830;--cell-bd:#243029;--tx:#e6ede8;--mu:#93a598;
+  --done-bg:#1d4630;--done-border:#3f8f5f;--done-text:#8fe3b0;
+  --miss-bg:#4a2426;--miss-border:#9e4a4a;--miss-text:#ff9d93;
+  --danger:#ff6b6b;
+  --hdr-from:#0b2e1b;--hdr-to:#14472b;
+  --track:#24312a;
+  --sh:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  --overlay:rgba(0,0,0,.65);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
 html,body{overflow-x:hidden;width:100%}
-button,input,textarea,select,table,thead,tbody,tr,th,td,a,span,div,p,label{font-family:'Amiri',serif!important;}
-body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--tx);padding:1.2rem 0.8rem 3rem}
-.hdr{text-align:center;margin-bottom:1.4rem;padding-bottom:1rem;border-bottom:1.5px solid var(--bd)}
-.bsm{font-size:16px;color:var(--gold);margin-bottom:5px;font-weight:600}
-.hdr h1{font-size:24px;font-weight:700;color:#d4a017;font-family:'Amiri',serif;text-shadow:0 1px 3px rgba(0,0,0,.2)}
-.hdr p{font-size:12px;color:var(--mu);margin-top:5px}
-.journey-quote{font-size:14px;color:var(--tx);line-height:1.9;margin-top:10px;font-weight:700}
-.journey-quote span{color:var(--gold);font-size:13px}
-.how-box{background:var(--sf);border:1.5px solid var(--bd);border-radius:12px;margin-bottom:1rem;overflow:hidden;box-shadow:var(--sh)}
-.how-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gD);color:#fff;cursor:pointer;font-size:13px;font-weight:700}
-.how-body{display:none;padding:12px 14px;font-size:11.5px;color:var(--tx)}
-.how-body .sec-title{font-weight:700;color:var(--primary);margin:8px 0 3px;font-size:12px}
-.how-body .row{display:flex;justify-content:space-between;padding:3px 8px;border-radius:6px;background:var(--bg);margin-bottom:2px}
-.how-body .row span:last-child{font-weight:700;color:var(--primary)}
-.how-body .row.neg span:last-child{color:#ef4444}
-.leg{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;font-size:12px;color:var(--mu)}
-.li{display:flex;align-items:center;gap:5px}
-.ld{width:16px;height:16px;border-radius:4px;display:inline-block;border:1.5px solid}
+body{font-family:'Tajawal',system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--tx);padding:1rem .7rem 3rem;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font-family:inherit}
+.wrap{max-width:760px;margin:0 auto}
+
+/* ===== الهيدر ===== */
+.hdr{position:relative;text-align:center;margin-bottom:1rem;padding:1.5rem 1rem 1.2rem;border-radius:22px;background:linear-gradient(145deg,var(--hdr-from),var(--hdr-to));color:#fff;box-shadow:var(--sh);overflow:hidden}
+.hdr::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 18%,rgba(240,192,64,.22),transparent 42%),radial-gradient(circle at 88% 92%,rgba(255,255,255,.08),transparent 45%);pointer-events:none}
+.hdr::after{content:"✦";position:absolute;right:16px;top:12px;color:rgba(240,192,64,.45);font-size:16px}
+.hdr>*{position:relative}
+.hdr .theme-toggle{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s;-webkit-tap-highlight-color:transparent}
+.hdr .theme-toggle:active{transform:scale(.92)}
+.bsm{font-family:'Amiri',serif;font-size:15px;color:#f0d68a;margin-bottom:2px}
+.hdr h1{font-family:'Amiri',serif;font-size:30px;font-weight:700;color:#f3c74a;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hdr-divider{width:80px;height:2px;margin:8px auto 10px;background:linear-gradient(90deg,transparent,#f0c040,transparent)}
+.ayah{font-family:'Amiri',serif;font-size:19px;line-height:1.9;color:#fff;font-weight:700}
+.ayah-ref{font-size:10.5px;color:rgba(255,255,255,.65);margin-top:1px}
+.tap-guide{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tg{font-size:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 10px;color:#fff}
+.tg b{color:#f3d27a}
+
+/* ===== كيف تحسب النقاط ===== */
+.how-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--radius);margin-bottom:.9rem;overflow:hidden;box-shadow:var(--sh)}
+.how-hdr{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:none;border:none;color:var(--primary);cursor:pointer;font-size:13.5px;font-weight:800;text-align:right}
+[data-theme="dark"] .how-hdr{color:var(--done-text)}
+.how-hdr .arr{font-size:11px;color:var(--mu)}
+.how-body{display:none;padding:0 14px 12px;font-size:12px;color:var(--tx);border-top:1px solid var(--bd)}
+.how-body .sec-title{font-weight:800;color:var(--gold);margin:10px 0 4px;font-size:12px}
+.how-body .row{display:flex;justify-content:space-between;padding:6px 10px;border-radius:9px;background:var(--sf2);margin-bottom:3px}
+.how-body .row span:last-child{font-weight:800;color:var(--done-text)}
+.how-note{font-size:10px;color:var(--mu);line-height:1.8;margin:5px 4px}
+.how-tip{font-size:10px;color:var(--gold);line-height:1.8;margin:6px 4px 0}
+
+/* ===== الاسم + المفتاح ===== */
+.name-card{display:flex;align-items:center;gap:10px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--radius);padding:10px 12px;margin-bottom:.8rem;box-shadow:var(--sh)}
+.name-card label{font-size:13px;color:var(--mu);font-weight:700;white-space:nowrap}
+.name-card input{flex:1;min-width:0;border:1.5px solid var(--bd);border-radius:10px;padding:9px 12px;font-size:14px;background:var(--sf2);color:var(--tx);text-align:right;outline:none;transition:border-color .15s,box-shadow .15s}
+.name-card input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.leg{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:.8rem;font-size:11.5px;color:var(--mu)}
+.li{display:flex;align-items:center;gap:6px;background:var(--sf);border:1px solid var(--bd);border-radius:999px;padding:4px 10px}
+.ld{width:14px;height:14px;border-radius:4px;display:inline-block;border:1.5px solid}
 .ld.e{background:var(--sf);border-color:var(--bd)}.ld.d{background:var(--done-bg);border-color:var(--done-border)}.ld.m{background:var(--miss-bg);border-color:var(--miss-border)}
-.nr{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1.2rem}
-.nr label{font-size:13px;color:var(--mu);font-weight:500}
-.nr input{border:1.5px solid var(--bd);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:13px;background:var(--sf);color:var(--tx);width:180px;text-align:right;outline:none}
-.nr input:focus{border-color:var(--primary)}
-.tw{overflow:hidden;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--bd);background:var(--sf);margin-bottom:1rem}
+
+/* ===== الجدول ===== */
+.tw{overflow:clip;border-radius:var(--radius);box-shadow:var(--sh);border:1px solid var(--bd);background:var(--sf);margin-bottom:1rem}
 table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px}
-thead th{background:var(--primary);color:#fff;font-weight:600;padding:8px 2px;text-align:center;border-bottom:2px solid var(--primary-dark);font-size:10.5px}
-thead th.tc{background:var(--primary-dark);width:18px}
+thead th{position:sticky;top:0;z-index:3;background:var(--th-bg);color:#fff;font-weight:700;padding:9px 2px;text-align:center;font-size:11px}
+thead th.tc{background:var(--th-bg2);width:18px}
 thead th.ti{text-align:right;padding-right:8px;width:32%}
-thead th.tp{width:28px;font-size:10px;opacity:.85}
+thead th.tp{width:28px;font-size:10px;opacity:.9}
 thead th.td{width:5.5%}
-td.cc{background:#e8f6ee;color:var(--gD);font-weight:700;text-align:center;padding:3px 1px;border:1px solid #c8e8d4;writing-mode:vertical-lr;text-orientation:mixed;font-size:9px;vertical-align:middle;max-width:18px;overflow:hidden}
-td.ic{font-size:10.5px;color:var(--tx);padding:4px 6px 4px 3px;border:1px solid #ede7db;background:var(--sf);overflow:hidden;white-space:normal;line-height:1.35}
-td.pc{text-align:center;color:var(--mu);font-size:11px;padding:4px 1px;border:1px solid #ede7db;background:#faf8f3;font-weight:600;position:relative;min-width:32px;cursor:default}
-td.cell{text-align:center;padding:0;border:1px solid #ede7db;cursor:pointer;user-select:none;background:var(--sf);transition:background .1s;height:40px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;vertical-align:middle}
-td.cell.done{background:var(--done-bg)}
-td.cell.miss{background:var(--miss-bg)}
-.cell-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:40px;gap:1px}
+td.cc{background:var(--primary-light);color:var(--done-text);font-weight:800;text-align:center;padding:3px 1px;border:1px solid var(--cell-bd);writing-mode:vertical-lr;text-orientation:mixed;font-size:9.5px;vertical-align:middle;max-width:18px;overflow:hidden;letter-spacing:.5px}
+td.ic{font-size:10.5px;color:var(--tx);padding:5px 6px 5px 3px;border:1px solid var(--cell-bd);background:var(--sf);overflow:hidden;white-space:normal;line-height:1.4}
+.ib-name{font-weight:700}
+.ib-name.neg{color:var(--danger)}
+.ib-note{color:var(--gold);font-size:9px;line-height:1.4;margin-top:2px;font-weight:500}
+.ib-badil{color:var(--gold);font-size:9px;line-height:1.4;margin-top:2px;font-weight:500}
+td.pc{text-align:center;color:var(--mu);font-size:11px;padding:4px 1px;border:1px solid var(--cell-bd);background:var(--sf2);font-weight:800;position:relative;min-width:32px;cursor:default}
+td.pc.neg{color:var(--danger)}
+td.cell{text-align:center;padding:0;border:1px solid var(--cell-bd);cursor:pointer;user-select:none;background:var(--sf);transition:background .15s;height:42px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;vertical-align:middle}
+td.cell:active{filter:brightness(.95)}
+td.cell.done{background:var(--done-bg);color:var(--done-text)}
+td.cell.miss{background:var(--miss-bg);color:var(--miss-text)}
+tbody tr:hover td.ic{background:var(--sf2)}
+.cell-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:42px;gap:1px;animation:pop .18s ease-out}
+@keyframes pop{from{transform:scale(.7);opacity:.3}to{transform:scale(1);opacity:1}}
 .pts-row{display:flex;align-items:center;justify-content:center;gap:2px}
-.cell-arrow{font-size:8px;font-weight:700;line-height:1;font-family:Arial,sans-serif!important}
+.cell-arrow{font-size:8px;font-weight:700;line-height:1;font-family:Arial,sans-serif}
 .cell-arrow.up{color:var(--done-text)}
-.cell-arrow.down{color:#c0392b}
-.cell-pts{font-size:10px;font-weight:700;text-decoration:underline dotted;cursor:text;line-height:1}
-.cell-pts.up{color:var(--done-text)}
-.cell-pts.down{color:#c0392b}
-.cell-pts.eq{color:var(--done-text)}
+.cell-arrow.down{color:var(--miss-text)}
+.cell-pts{font-size:10px;font-weight:800;text-decoration:underline dotted;cursor:text;line-height:1}
+.cell-pts.up,.cell-pts.eq{color:var(--done-text)}
+.cell-pts.down{color:var(--miss-text)}
 .cell-pts.fixed{text-decoration:none;cursor:default}
-.pts-inline-input{width:28px;font-size:11px;font-weight:700;text-align:center;border:1.5px solid var(--primary);border-radius:4px;background:#fff;color:var(--primary);outline:none;padding:1px 2px;font-family:'Amiri',serif!important}
-tr.tr-day td{background:var(--primary);color:#fff;font-weight:700;font-size:12px;padding:7px 3px;text-align:center;border-top:2px solid var(--primary-dark)}
-tr.tr-day td.lbl{text-align:right;padding-right:8px;background:var(--primary-dark);font-size:11px}
-tr.tr-day td.pts-total{background:var(--primary-dark);font-size:11px;font-weight:700;color:#a8e6c0;text-align:center}
-.qiyam-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;height:40px;gap:1px;cursor:default}
-.qiyam-num{font-size:11px;font-weight:700;color:var(--primary);line-height:1}
-.qiyam-sub{font-size:8px;color:var(--mu);line-height:1}
-.qiyam-btns{display:flex;gap:2px;align-items:center}
-.qiyam-btn{width:14px;height:14px;border-radius:3px;border:1px solid var(--gM);background:var(--sf);color:var(--gD);font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
-.pdf-btn{display:inline-flex;align-items:center;gap:3px;font-size:9px;color:var(--primary-dark);background:var(--primary-light);border:1px solid var(--gM);border-radius:4px;padding:2px 5px;cursor:pointer;margin-top:2px;text-decoration:none;font-family:'Amiri',serif!important;font-weight:700}
-.pdf-btn:hover{background:var(--gL)}
-.pdf-overlay{position:fixed;inset:0;z-index:9800;background:rgba(0,0,0,.6);display:none;flex-direction:column}
+.pts-inline-input{width:28px;font-size:11px;font-weight:700;text-align:center;border:1.5px solid var(--primary);border-radius:4px;background:var(--sf);color:var(--primary);outline:none;padding:1px 2px}
+tr.tr-day td{background:var(--th-bg);color:#fff;font-weight:800;font-size:11.5px;padding:8px 2px;text-align:center}
+tr.tr-day td.lbl{text-align:right;padding-right:8px;background:var(--th-bg2);font-size:11px}
+tr.tr-day td.pts-total{background:var(--th-bg2);font-size:11px;font-weight:800;color:#a8e6c0;text-align:center}
+tr.tr-pct td{background:var(--primary-light);border:1px solid var(--cell-bd);padding:5px 1px;text-align:center;font-size:10px;font-weight:800}
+tr.tr-pct td.pct-lbl{text-align:right;padding-right:8px;color:var(--done-text)}
+
+.pdf-btn{display:inline-flex;align-items:center;gap:3px;font-size:9px;color:var(--done-text);background:var(--primary-light);border:1px solid var(--gM);border-radius:6px;padding:2px 6px;cursor:pointer;margin-top:3px;text-decoration:none;font-weight:700}
+.pdf-overlay{position:fixed;inset:0;z-index:9800;background:var(--overlay);display:none;flex-direction:column}
 .pdf-overlay.show{display:flex}
-.pdf-header{background:var(--primary-dark);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.pdf-header{background:var(--th-bg2);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .pdf-header span{font-size:14px;font-weight:700}
-.pdf-header button{background:#ef4444;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-family:inherit;font-size:13px;cursor:pointer}
+.pdf-header button{background:var(--danger);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer}
 .pdf-frame{flex:1;width:100%;border:none;background:#fff}
-.counter-box{background:var(--sf);border:1.5px solid var(--gM);border-radius:12px;padding:12px 14px;margin-bottom:1rem;box-shadow:var(--sh)}
-.counter-title{font-size:13px;font-weight:700;color:var(--gD);margin-bottom:10px}
-.counter-row{display:flex;align-items:center;gap:10px}
-.counter-name{flex:1;font-size:12px;color:var(--tx)}
-.counter-btns{display:flex;align-items:center;gap:6px}
-.counter-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--gM);background:var(--sf);color:var(--gD);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
-.counter-val{font-size:18px;font-weight:700;color:var(--gD);min-width:28px;text-align:center}
-.counter-pts{font-size:11px;color:var(--mu)}
-.gc{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
-.gc2{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:1rem}
-.sc{background:var(--sf);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--bd);box-shadow:var(--sh)}
-.sc.pct-box{border-color:var(--done-border);background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
-.sl{font-size:11px;color:var(--mu);margin-bottom:2px}
-.sv{font-size:22px;font-weight:800;color:var(--primary);line-height:1}
-.btns{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
-.btn{font-family:inherit;font-size:13px;font-weight:700;padding:11px;border-radius:10px;cursor:pointer;border:none;transition:all .15s;width:100%;text-align:center}
-.btn-send{background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 2px 8px rgba(58,158,95,.25)}
-.btn-report{background:linear-gradient(90deg,#5a7a65,#3d5c47);color:#fff;box-shadow:0 2px 8px rgba(90,122,101,.25)}
-.btn-reset{background:#fff;color:#ef4444;border:1.5px solid #ef4444;font-size:12px;padding:9px}
-.note{text-align:center;font-size:11px;color:var(--mu);line-height:1.7}
-.status-bar{text-align:center;font-size:12px;padding:8px;border-radius:8px;margin-bottom:8px;display:none}
+
+.counter-box{display:none!important}
+#goalsBox{display:none!important}
+
+/* ===== الإحصائيات ===== */
+.gc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.sc{background:var(--sf);border-radius:14px;padding:12px 6px;text-align:center;border:1px solid var(--bd);box-shadow:var(--sh)}
+.sl{font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:500}
+.sv{font-size:24px;font-weight:800;color:var(--done-text);line-height:1.1}
+.pct-box{padding:12px 14px;margin-bottom:1rem;text-align:right;background:linear-gradient(135deg,var(--primary-light),var(--sf));border-color:var(--done-border)}
+.pct-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pct-head .sl{margin:0;font-size:12px;font-weight:700;color:var(--tx)}
+.pct-track{height:9px;background:var(--track);border-radius:999px;overflow:hidden}
+.pct-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gM),var(--primary));border-radius:999px;transition:width .5s ease}
+.pct-hint{font-size:10px;color:var(--mu);margin-top:6px}
+
+/* ===== الأزرار ===== */
+.btns{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.btn{font-size:14px;font-weight:700;padding:12px;border-radius:12px;cursor:pointer;border:none;transition:transform .12s,box-shadow .15s,opacity .15s;width:100%;text-align:center;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.7}
+.btn-send{background:linear-gradient(90deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 4px 14px rgba(26,107,60,.28)}
+.btn-report{background:var(--sf);color:var(--done-text);border:1.5px solid var(--done-border)}
+.btn-reset{background:transparent;color:var(--danger);border:1.5px dashed var(--danger);font-size:12.5px;padding:10px}
+.note{text-align:center;font-size:11px;color:var(--mu);line-height:1.8}
+.status-bar{text-align:center;font-size:12px;padding:9px;border-radius:10px;margin-bottom:10px;display:none;font-weight:700}
 .status-bar.ok{background:var(--done-bg);color:var(--done-text);border:1px solid var(--done-border)}
-.overlay{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center}
+
+/* ===== نافذة التأكيد ===== */
+.overlay{position:fixed;inset:0;z-index:9500;background:var(--overlay);display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
 .overlay.show{display:flex}
-.modal-box{background:var(--sf);border-radius:14px;width:90%;max-width:340px;overflow:hidden;box-shadow:0 8px 32px rgba(58,158,95,.15)}
-.goal-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;background:#faf8f3;border:1px solid var(--bd);margin-bottom:8px}
-.goal-name{flex:1;font-size:12px;color:var(--tx);line-height:1.4}
-.goal-base{font-size:10px;color:var(--mu);margin-top:2px}
-.goal-ctrl{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:120px}
-.goal-opts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-.goal-opt{font-size:10px;padding:4px 8px;border-radius:6px;border:1.5px solid var(--bd);background:#fff;color:var(--mu);cursor:pointer;font-family:inherit;white-space:nowrap}
-.goal-opt.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700}
-.goal-custom-row{display:flex;align-items:center;gap:6px}
-.goal-custom-inp{width:56px;border:1.5px solid var(--bd);border-radius:6px;padding:3px 6px;font-size:12px;text-align:center;font-family:inherit;outline:none;background:var(--sf)}
-.goal-custom-inp:focus{border-color:var(--gold)}
-.goal-unit{font-size:10px;color:var(--mu)}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--primary-dark);color:#fff;font-size:13px;padding:9px 22px;border-radius:30px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap}
+.modal-box{background:var(--sf);border-radius:18px;width:90%;max-width:340px;overflow:hidden;box-shadow:var(--sh-lg);border:1px solid var(--bd)}
+.modal-head{background:var(--danger);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:800}
+.modal-head button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer}
+.modal-body{padding:18px 16px;text-align:center}
+.modal-icon{font-size:34px;margin-bottom:8px}
+.modal-q{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:6px}
+.modal-sub{font-size:12px;color:var(--mu);margin-bottom:16px}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.m-btn{padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer}
+.m-cancel{border:1.5px solid var(--bd);background:var(--sf2);color:var(--tx)}
+.m-danger{border:none;background:var(--danger);color:#fff}
+
+/* ===== التقرير ===== */
+.rp-overlay{position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.rp-top{position:sticky;top:0;z-index:5;background:var(--th-bg2);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:800}
+.rp-top button{background:var(--danger);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
+.rp-content{padding:1rem;max-width:760px;margin:0 auto}
+.rp-hero{background:linear-gradient(145deg,var(--hdr-from),var(--hdr-to));color:#fff;padding:1.4rem;border-radius:18px;text-align:center;margin-bottom:1rem;box-shadow:var(--sh)}
+.rp-bsm{font-family:'Amiri',serif;font-size:14px;color:#f0d68a}
+.rp-title{font-family:'Amiri',serif;font-size:24px;font-weight:700;color:#f3c74a}
+.rp-name{font-size:14px;opacity:.85;margin-top:2px}
+.rp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.rp-stat{background:var(--sf);border-radius:14px;padding:12px 6px;text-align:center;border:1px solid var(--bd);box-shadow:var(--sh)}
+.rp-stat b{display:block;font-size:24px;font-weight:800;color:var(--done-text)}
+.rp-stat small{font-size:13px;color:var(--mu)}
+.rp-stat span{font-size:10.5px;color:var(--mu)}
+.rp-pct{background:linear-gradient(135deg,var(--primary-light),var(--sf));border:1px solid var(--done-border);border-radius:14px;padding:12px 14px;margin-bottom:1rem;box-shadow:var(--sh)}
+.rp-pct-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;font-weight:700}
+.rp-pct-head b{font-size:22px;color:var(--done-text)}
+.rp-card{background:var(--sf);border-radius:16px;padding:14px;border:1px solid var(--bd);margin-bottom:1rem;box-shadow:var(--sh)}
+.rp-card-t{font-size:13.5px;font-weight:800;color:var(--done-text);margin-bottom:12px}
+.rp-bars{display:flex;gap:4px;align-items:flex-end;height:140px}
+.rp-bar{display:flex;flex-direction:column;align-items:center;flex:1;gap:3px}
+.rp-bar-v{font-size:9px;font-weight:800;color:var(--done-text)}
+.rp-bar-f{width:72%;border-radius:6px 6px 2px 2px;min-height:3px;transition:height .4s}
+.lv-h{background:var(--primary)}.lv-m{background:var(--gM)}.lv-l{background:var(--primary-soft)}.lv-z{background:var(--bd)}
+.rp-bar-d{font-size:9.5px;color:var(--mu)}
+.rp-cat{margin-bottom:14px}
+.rp-cat-head{background:var(--th-bg);color:#fff;font-size:11.5px;font-weight:800;padding:7px 12px;border-radius:9px;display:flex;justify-content:space-between}
+.rp-cat-track{height:4px;background:var(--track);border-radius:999px;overflow:hidden;margin:5px 2px 7px}
+.rp-cat-track div{height:100%;background:var(--gM);border-radius:999px}
+.rp-row{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:9px;background:var(--sf2);margin-bottom:3px}
+.rp-row-name{flex:1;font-size:11px;color:var(--tx);font-weight:500}
+.rp-row-name.neg,.rp-row-pts.neg{color:var(--danger)}
+.rp-dots{display:flex;gap:2px}
+.rp-dot{width:16px;height:16px;border-radius:4px;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.rp-dot.d{background:var(--done-bg);color:var(--done-text)}
+.rp-dot.m{background:var(--miss-bg);color:var(--miss-text)}
+.rp-dot.e{background:var(--track);color:transparent}
+.rp-row-pts{width:28px;text-align:center;font-size:11px;font-weight:800;color:var(--done-text)}
+.rp-print{text-align:center;padding-bottom:1rem}
+.rp-print .btn{width:auto;padding:10px 26px}
+
+/* ===== الإشعارات ===== */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--th-bg2);color:#fff;font-size:13px;font-weight:700;padding:10px 22px;border-radius:30px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:var(--sh-lg)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#goalsBox,.counter-box{display:none!important}
+.update-toast{position:fixed;left:12px;right:12px;bottom:16px;z-index:99999;background:var(--th-bg2);color:#fff;border-radius:16px;padding:12px 14px;box-shadow:var(--sh-lg);display:none;align-items:center;gap:10px;justify-content:space-between}
+.update-toast.show{display:flex}
+.update-toast span{font-size:13px;font-weight:700;line-height:1.6}
+.update-toast button{background:#fff;color:#0f4a28;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+
+@media print{
+  body{padding:0}
+  body>*:not(#rptOv){display:none!important}
+  #rptOv{position:static;overflow:visible}
+  .rp-top,.rp-print{display:none!important}
+}
 </style>
-<link rel="manifest" href="manifest.json?v=2026.09.27.1">
+<link rel="manifest" href="manifest.json?v=2026.10.07.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="برنامج عبادة">
-<meta name="theme-color" content="#1a6b3c">
-<link rel="apple-touch-icon" href="icon.png?v=2026.09.27.1">
-
-<style>
-.update-toast{position:fixed;left:12px;right:12px;bottom:16px;z-index:99999;background:#0f4a28;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25);display:none;align-items:center;gap:10px;justify-content:space-between;font-family:'Amiri',serif!important}
-.update-toast.show{display:flex}
-.update-toast span{font-size:13px;font-weight:700;line-height:1.6}
-.update-toast button{background:#fff;color:#0f4a28;border:none;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Amiri',serif!important;white-space:nowrap}
-</style>
+<meta name="theme-color" id="themeColorMeta" content="#1a6b3c">
+<link rel="apple-touch-icon" href="icon.png?v=2026.10.07.1">
 <script>
-window.APP_VERSION = "2026.09.27.1";
+window.APP_VERSION = "2026.10.07.1";
 </script>
 </head>
 <body>
-<div class="hdr">
+<main class="wrap">
+<header class="hdr">
+  <button type="button" class="theme-toggle" id="themeBtn" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي">🌙</button>
   <div class="bsm">بسم الله الرحمن الرحيم</div>
   <h1>برنامج عبادة</h1>
-  <div class="journey-quote">فِي رحلة العمر والأيام مسرعة<br>لا تنس من أنت أو ما وجهة السفر<br><span> أنت = مسلم &nbsp;|&nbsp; وجهة السفر = الجنة</span></div>
-  <p>كبسة = عملته ✓ &nbsp;|&nbsp; كبستين = ما عملته ✗ &nbsp;|&nbsp; ثلاث = إلغاء</p>
-</div>
+  <div class="hdr-divider"></div>
+  <div class="ayah">﴿وَفِي ذَٰلِكَ فَلْيَتَنَافَسِ الْمُتَنَافِسُونَ﴾</div>
+  <div class="tap-guide">
+    <span class="tg"><b>كبسة</b> = عملته ✓</span>
+    <span class="tg"><b>كبستين</b> = ما عملته ✗</span>
+    <span class="tg"><b>ثلاث</b> = إلغاء</span>
+  </div>
+</header>
+
 <div class="how-box">
-  <div class="how-hdr" onclick="toggleHow()"><span>كيف تُحسب النقاط؟</span><span id="howArr">▼</span></div>
+  <button type="button" class="how-hdr" onclick="toggleHow()"><span>💡 كيف تُحسب النقاط؟</span><span id="howArr" class="arr">▼</span></button>
   <div class="how-body" id="howBody">
     <div class="sec-title">الأذكار</div>
     <div class="row"><span>أذكار الصباح</span><span>5 نقاط</span></div>
@@ -160,18 +273,23 @@ window.APP_VERSION = "2026.09.27.1";
     <div class="sec-title">القرآن</div>
     <div class="row"><span>قراءة ١٠ صفحات قرآن</span><span>10 نقاط</span></div>
     <div class="sec-title">الصلاة</div>
-    <div class="row"><span>كل صلاة مفروضة مع سنتها</span><span>5 نقاط</span></div>
-    <div style="font-size:9px;color:var(--mu);line-height:1.7;margin:3px 8px">الفجر: ركعتان قبليتان — الظهر: ركعتان قبليتان وركعتان بعديتان — العصر: ركعتان قبليتان — المغرب والعشاء: ركعتان بعديتان.</div>
-    <div style="font-size:9px;color:var(--gold);line-height:1.7;margin:5px 8px">تظهر البدائل تحت كل عبادة داخل الجدول.</div>
+    <div class="row"><span>كل فرض</span><span>3 نقاط</span></div>
+    <div class="row"><span>سنة كل صلاة</span><span>2 نقاط</span></div>
+    <div class="how-note">السنن: الفجر ركعتان قبليتان — الظهر ركعتان قبليتان وركعتان بعديتان — العصر ركعتان قبليتان — المغرب والعشاء ركعتان بعديتان.</div>
+    <div class="how-tip">تظهر البدائل تحت كل عبادة داخل الجدول.</div>
   </div>
 </div>
+
+<div class="name-card"><label for="userName">👤 الاسم</label><input type="text" id="userName" placeholder="اسمك هنا..."/></div>
+
 <div class="leg">
   <div class="li"><span class="ld e"></span>لم يُحدَّد</div>
   <div class="li"><span class="ld d"></span>تم ✓</div>
   <div class="li"><span class="ld m"></span>لم يتم ✗</div>
 </div>
-<div class="nr"><label>الاسم:</label><input type="text" id="userName" placeholder="اسمك هنا..."/></div>
+
 <div id="statusBar" class="status-bar"></div>
+
 <div class="tw"><table>
   <thead><tr>
     <th class="tc">الفئة</th><th class="ti">العبادة</th><th class="tp">نقاط</th>
@@ -180,6 +298,7 @@ window.APP_VERSION = "2026.09.27.1";
   </tr></thead>
   <tbody id="tbody"></tbody>
 </table></div>
+
 <div class="counter-box">
   <div class="counter-title">📖 أخذ موعد تسميع قرآن — 5 نقاط لكل مرة</div>
   <div class="counter-row">
@@ -192,43 +311,66 @@ window.APP_VERSION = "2026.09.27.1";
     <div class="counter-pts" id="counterPts">= 0 نقطة</div>
   </div>
 </div>
+
 <div class="gc">
   <div class="sc"><div class="sl">المجموع</div><div class="sv" id="grandVal">0</div></div>
   <div class="sc"><div class="sl">المعدل</div><div class="sv" id="avgVal">—</div></div>
   <div class="sc"><div class="sl">الأيام</div><div class="sv" id="filledVal">0/10</div></div>
 </div>
-<div class="gc2"><div class="sc pct-box">
-  <div class="sl">📊 معدل اليوم من 100</div>
-  <div class="sv" style="color:#15803d;font-size:20px" id="pctDayVal">—</div>
-  <div style="font-size:9px;color:var(--mu);margin-top:3px">معدل أدائك اليومي من 100</div>
-</div></div>
-<div id="resetModal" class="overlay"><div class="modal-box">
-  <div style="background:#ef4444;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
-    <span style="color:#fff;font-size:14px;font-weight:700">⚠️ إعادة تفريغ الجدول</span>
-    <button onclick="document.getElementById('resetModal').classList.remove('show')" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-  </div>
-  <div style="padding:16px;text-align:center">
-    <div style="font-size:32px;margin-bottom:8px">🗑️</div>
-    <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:6px">هل أنتِ متأكدة؟</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:16px">سيتم مسح جميع البيانات المحفوظة نهائياً</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button onclick="document.getElementById('resetModal').classList.remove('show')" style="font-family:inherit;padding:10px;border-radius:8px;border:1.5px solid var(--bd);background:#fff;color:var(--tx);font-size:13px;font-weight:700;cursor:pointer">إلغاء</button>
-      <button onclick="confirmReset()" style="font-family:inherit;padding:10px;border-radius:8px;border:none;background:#ef4444;color:#fff;font-size:13px;font-weight:700;cursor:pointer">مسح الكل ✓</button>
-    </div>
-  </div>
-</div></div>
-<div id="pdfOverlay" class="pdf-overlay">
-  <div class="pdf-header"><span id="pdfTitle">عرض الملف</span><button onclick="closePdf()">✕ إغلاق</button></div>
-  <iframe id="pdfFrame" class="pdf-frame" src=""></iframe>
+<div class="sc pct-box">
+  <div class="pct-head"><span class="sl">📊 معدل اليوم من 100</span><span class="sv" id="pctDayVal">—</span></div>
+  <div class="pct-track"><div class="pct-fill" id="pctDayBar"></div></div>
+  <div class="pct-hint">معدل أدائك اليومي من 100</div>
 </div>
+
 <div class="btns">
   <button class="btn btn-send" id="sendBtn" onclick="sendToManager()">☁️ إرسال نتائجي</button>
   <button class="btn btn-report" onclick="openReport()">📊 عرض تقريري</button>
   <button class="btn btn-reset" onclick="document.getElementById('resetModal').classList.add('show')">🗑️ إعادة تفريغ الجدول</button>
 </div>
 <p class="note">البيانات تُحفظ تلقائياً على جهازك ✓<br>اضغطي "إرسال" بعد كل يوم لتحديث نتائجك</p>
+</main>
+
+<div id="resetModal" class="overlay"><div class="modal-box">
+  <div class="modal-head">
+    <span>⚠️ إعادة تفريغ الجدول</span>
+    <button onclick="document.getElementById('resetModal').classList.remove('show')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-q">هل أنتِ متأكدة؟</div>
+    <div class="modal-sub">سيتم مسح جميع البيانات المحفوظة نهائياً</div>
+    <div class="modal-actions">
+      <button class="m-btn m-cancel" onclick="document.getElementById('resetModal').classList.remove('show')">إلغاء</button>
+      <button class="m-btn m-danger" onclick="confirmReset()">مسح الكل ✓</button>
+    </div>
+  </div>
+</div></div>
+
+<div id="pdfOverlay" class="pdf-overlay">
+  <div class="pdf-header"><span id="pdfTitle">عرض الملف</span><button onclick="closePdf()">✕ إغلاق</button></div>
+  <iframe id="pdfFrame" class="pdf-frame" src=""></iframe>
+</div>
+
 <div id="toast"></div>
+
 <script>
+// ===== الوضع الليلي =====
+const THEME_KEY='ibada_theme';
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',t==='dark'?'#0b2e1b':'#1a6b3c');
+  const b=document.getElementById('themeBtn');if(b){b.textContent=t==='dark'?'☀️':'🌙';b.title=t==='dark'?'الوضع النهاري':'الوضع الليلي';}
+}
+function toggleTheme(){
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+  applyTheme(t);
+}
+applyTheme(document.documentElement.getAttribute('data-theme')||'light');
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 var _ls=(function(){var sid=new URLSearchParams(location.search).get('sid')||'';if(!sid)return localStorage;var prefix='sid_'+sid+'_';return{getItem:function(k){return localStorage.getItem(prefix+k);},setItem:function(k,v){localStorage.setItem(prefix+k,v);},removeItem:function(k){localStorage.removeItem(prefix+k);}};})();
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzIkbxFUuXa8SGkoF1flg2t3uNJYx3xZZn5RlWj5NHjSBXYwemVq0rmCoYvV4-tWBb_HQ/exec';
 
@@ -254,19 +396,24 @@ const ROWS=[
   {cat:'الأذكار',ibada:'أذكار الصباح',pts:5,fixed:true},
   {cat:'الأذكار',ibada:'أذكار المساء',pts:5,fixed:true},
   {cat:'القرآن',ibada:'قراءة ١٠ صفحات قرآن',pts:10,fixed:true,badil:'أسماء الله الحسنى ٣ مرات'},
-  {cat:'الصلاة',ibada:'صلاة الفجر وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة الظهر وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة العصر وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة المغرب وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
-  {cat:'الصلاة',ibada:'صلاة العشاء وسنتها',pts:5,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'فرض الفجر',pts:3,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'سنة الفجر',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض الظهر',pts:3,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'سنة الظهر',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض العصر',pts:3,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'سنة العصر',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض المغرب',pts:3,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'سنة المغرب',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض العشاء',pts:3,fixed:true,badil:'٣٣ من الباقيات الصالحات'},
+  {cat:'الصلاة',ibada:'سنة العشاء',pts:2,fixed:true},
 ];
 
 const IBADA_NOTES={
-  'صلاة الفجر وسنتها':'الفرض + ركعتا سنة الفجر القبلية',
-  'صلاة الظهر وسنتها':'الفرض + ركعتان قبليتان وركعتان بعديتان',
-  'صلاة العصر وسنتها':'الفرض + ركعتان قبليتان',
-  'صلاة المغرب وسنتها':'الفرض + ركعتان بعديتان',
-  'صلاة العشاء وسنتها':'الفرض + ركعتان بعديتان',
+  'سنة الفجر':'ركعتا سنة الفجر القبلية',
+  'سنة الظهر':'ركعتان قبليتان وركعتان بعديتان',
+  'سنة العصر':'ركعتان قبليتان',
+  'سنة المغرب':'ركعتان بعديتان',
+  'سنة العشاء':'ركعتان بعديتان',
 };
 
 const DAYS=10,SK='ibada_v14',NK='ibada_name_v14',EDITK='ibada_edit_v14',COUNTERK='ibada_counter_v14',GOALK='ibada_goals_v4',SCHEMA_VERSION=3;
@@ -325,55 +472,7 @@ function toggleGoals(){
 function buildGoalsSection(){
   const container=document.getElementById('goalsRows');
   if(!container)return;
-  container.innerHTML='';
-  GOAL_ITEMS.forEach(g=>{
-    const curVal=getGoalVal(g.ri);
-    const row=document.createElement('div');row.className='goal-row';
-    const info=document.createElement('div');info.style.flex='1';
-    info.innerHTML='<div class="goal-name">'+g.name+'</div><div class="goal-base">الأساسي: '+g.baseLabel+'</div>';
-    row.appendChild(info);
-    const ctrl=document.createElement('div');ctrl.className='goal-ctrl';
-    const optsDiv=document.createElement('div');optsDiv.className='goal-opts';
-    g.opts.forEach((label,i)=>{
-      const btn=document.createElement('button');
-      btn.className='goal-opt'+(g.optVals[i]===curVal?' active':'');
-      btn.textContent=label;
-      btn.onclick=function(){
-        personalGoals[g.ri]=g.optVals[i];
-        // امسح editedPts لهاد الصف حتى يطبق الهدف الجديد
-        for(let d=1;d<=DAYS;d++){delete editedPts[g.ri+'_'+d];}
-        saveGoals();saveEditedPts();
-        // أعد رسم الخلايا اللي فيها ✓
-        for(let d=1;d<=DAYS;d++){const td=document.getElementById('cell_'+g.ri+'_'+d);if(td)applyCell(td,state[sk(g.ri,d)]||0,g.ri,d);}
-        recalc();buildGoalsSection();showToast('✓ هدفك: '+label);
-      };
-      optsDiv.appendChild(btn);
-    });
-    ctrl.appendChild(optsDiv);
-    if(g.note){const noteEl=document.createElement('div');noteEl.style.cssText='font-size:9px;color:var(--gold);margin-top:2px;text-align:right';noteEl.textContent='⚠ '+g.note;ctrl.appendChild(noteEl);}
-    if(!g.noCustom){
-      const customRow=document.createElement('div');customRow.className='goal-custom-row';
-      const customLbl=document.createElement('span');customLbl.style.cssText='font-size:10px;color:var(--mu)';customLbl.textContent='أو:';
-      const inp=document.createElement('input');inp.className='goal-custom-inp';inp.type='number';
-      inp.min=g.ri===8?2:1;inp.step=g.ri===8?2:1;inp.max=g.max||9999;inp.placeholder='رقم';
-      const isCustom=!g.optVals.includes(curVal);if(isCustom)inp.value=curVal;
-      inp.onchange=function(){
-        let v=parseFloat(inp.value);
-        if(g.ri===8)v=Math.max(2,Math.round(v/2)*2);
-        if(g.max)v=Math.min(g.max,v);
-        if(!isNaN(v)&&v>0){
-          personalGoals[g.ri]=v;
-          for(let d=1;d<=DAYS;d++){delete editedPts[g.ri+'_'+d];}
-          saveGoals();saveEditedPts();
-          for(let d=1;d<=DAYS;d++){const td=document.getElementById('cell_'+g.ri+'_'+d);if(td)applyCell(td,state[sk(g.ri,d)]||0,g.ri,d);}
-          recalc();buildGoalsSection();showToast('✓ هدفك: '+v+' '+g.unit);
-        }
-      };
-      const unitSpan=document.createElement('span');unitSpan.className='goal-unit';unitSpan.textContent=g.unit;
-      customRow.appendChild(customLbl);customRow.appendChild(inp);customRow.appendChild(unitSpan);ctrl.appendChild(customRow);
-    }
-    row.appendChild(ctrl);container.appendChild(row);
-  });
+  // قسم الأهداف غير مستخدم حالياً
 }
 
 function changeCounter(delta){counterVal=Math.max(0,counterVal+delta);updateCounter();saveCounter();recalc();}
@@ -403,8 +502,8 @@ function applyCell(td,v,ri,d){
     const isUp=!isFixed&&curPts>defPts,isDown=!isFixed&&curPts<defPts;
     const inner=document.createElement('div');inner.className='cell-inner';
     const svgNS='http://www.w3.org/2000/svg';
-    const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','13');svg.setAttribute('height','13');
-    const path=document.createElementNS(svgNS,'path');path.setAttribute('d','M4 12.5L9.5 18L20 6');path.setAttribute('fill','none');path.setAttribute('stroke','#1A6B3C');path.setAttribute('stroke-width','2.8');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');
+    const svg=document.createElementNS(svgNS,'svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','14');svg.setAttribute('height','14');
+    const path=document.createElementNS(svgNS,'path');path.setAttribute('d','M4 12.5L9.5 18L20 6');path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','2.8');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');
     svg.appendChild(path);inner.appendChild(svg);
     const ptsRow=document.createElement('div');ptsRow.className='pts-row';
     if(isUp||isDown){const arrow=document.createElement('span');arrow.className='cell-arrow '+(isUp?'up':'down');arrow.textContent=isUp?'↑':'↓';ptsRow.appendChild(arrow);}
@@ -413,7 +512,7 @@ function applyCell(td,v,ri,d){
     ptsRow.appendChild(numSpan);inner.appendChild(ptsRow);td.innerHTML='';td.appendChild(inner);
   }else if(v===2){
     td.classList.add('miss');
-    td.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" style="display:block;margin:auto"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="#c0392b" stroke-width="2.8" stroke-linecap="round"/></svg>';
+    td.innerHTML='<div class="cell-inner"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13"><path d="M5 5L19 19M19 5L5 19" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></div>';
   }else{td.innerHTML='';}
 }
 
@@ -432,11 +531,10 @@ function toggle(ri,d,td){
 }
 
 function buildDayPctRow(tb){
-  const tr=document.createElement('tr');
-  const lbl=document.createElement('td');lbl.className='lbl';lbl.colSpan=3;
-  lbl.style.cssText='background:var(--primary-light);color:var(--primary-dark);font-size:10px;font-weight:700;text-align:right;padding-right:8px;border-top:2px solid var(--primary)';
+  const tr=document.createElement('tr');tr.className='tr-pct';
+  const lbl=document.createElement('td');lbl.className='pct-lbl';lbl.colSpan=3;
   lbl.textContent='معدل اليوم من 100';tr.appendChild(lbl);
-  for(let d=1;d<=DAYS;d++){const td=document.createElement('td');td.id='dpct'+d;td.style.cssText='text-align:center;font-size:10px;font-weight:700;color:var(--primary);background:var(--primary-light);border:1px solid #a8d8b8;border-top:2px solid var(--primary);padding:3px 1px';td.textContent='—';tr.appendChild(td);}
+  for(let d=1;d<=DAYS;d++){const td=document.createElement('td');td.id='dpct'+d;td.className='pct-cell';td.textContent='—';tr.appendChild(td);}
   tb.appendChild(tr);
 }
 
@@ -452,20 +550,19 @@ function build(){
     }
     const ti=document.createElement('td');ti.className='ic';
     const note=IBADA_NOTES[r.ibada];
-    const noteHtml=note?'<div style="color:#b8860b;font-size:9px;line-height:1.4;margin-top:2px">'+note+'</div>':'';
+    const noteHtml=note?'<div class="ib-note">'+note+'</div>':'';
     let badilHtml='';
     if(r.badilBook){
-      badilHtml='<div style="color:#b8860b;font-size:9px;line-height:1.4;margin-top:3px">🔄 بديل: القراءة من كتاب "لا يرد القدر إلا الدعاء"</div>'
-        +'<button class="pdf-btn" style="margin-top:3px" onclick="openPdf(\'book\',\'لا يرد القدر إلا الدعاء\')">📖 افتحي الكتاب</button>';
+      badilHtml='<div class="ib-badil">🔄 بديل: القراءة من كتاب "لا يرد القدر إلا الدعاء"</div>'
+        +'<button class="pdf-btn" onclick="event.stopPropagation();openPdf(\'book\',\'لا يرد القدر إلا الدعاء\')">📖 افتحي الكتاب</button>';
     }else if(r.badil){
-      badilHtml='<div style="color:#b8860b;font-size:9px;line-height:1.4;margin-top:2px">🔄 بديل: '+r.badil+'</div>';
+      badilHtml='<div class="ib-badil">🔄 بديل: '+r.badil+'</div>';
     }
     const pdfHtml=r.pdfLink?'<button class="pdf-btn" onclick="openPdf(\''+r.pdfLink+'\',\''+r.pdfTitle+'\')">📄 افتحي الملف</button>':'';
-    if(r.negative){ti.innerHTML='<div style="color:#ef4444">'+r.ibada+'</div>'+noteHtml+badilHtml;}
-    else{ti.innerHTML='<div>'+r.ibada+'</div>'+noteHtml+badilHtml+pdfHtml;}
+    if(r.negative){ti.innerHTML='<div class="ib-name neg">'+r.ibada+'</div>'+noteHtml+badilHtml;}
+    else{ti.innerHTML='<div class="ib-name">'+r.ibada+'</div>'+noteHtml+badilHtml+pdfHtml;}
     tr.appendChild(ti);
-    const tp=document.createElement('td');tp.className='pc';
-    if(r.negative)tp.style.color='#ef4444';
+    const tp=document.createElement('td');tp.className='pc'+(r.negative?' neg':'');
     tp.textContent=r.pts;
     tr.appendChild(tp);
     for(let d=1;d<=DAYS;d++){
@@ -511,7 +608,9 @@ function recalc(){
     if(hasData){const baseTotal=getDayBase(d);const pct=Math.min(100,Math.round(baseTotal/dayMax*100));el.textContent=pct+'%';el.style.color=pct>=80?'var(--done-text)':pct>=50?'var(--gold)':'var(--miss-text)';baseGrandSum+=baseTotal;}
     else{el.textContent='—';el.style.color='var(--mu)';}
   }
-  document.getElementById('pctDayVal').textContent=filled>0?Math.min(100,Math.round((baseGrandSum/filled)/dayMax*100))+'%':'—';
+  const avgPct=filled>0?Math.min(100,Math.round((baseGrandSum/filled)/dayMax*100)):null;
+  document.getElementById('pctDayVal').textContent=avgPct!==null?avgPct+'%':'—';
+  const bar=document.getElementById('pctDayBar');if(bar)bar.style.width=(avgPct||0)+'%';
 }
 
 function toggleHow(){const body=document.getElementById('howBody');const arr=document.getElementById('howArr');const open=body.style.display==='block';body.style.display=open?'none':'block';arr.textContent=open?'▼':'▲';}
@@ -537,37 +636,50 @@ function openReport(){
   const dayMax=calcDayMax();
   let baseGrandSumR=0;
   for(let d=1;d<=DAYS;d++){if(ROWS.some((_,ri)=>(state[sk(ri,d)]||0)!==0))baseGrandSumR+=getDayBase(d);}
-  const pctDay=filled>0?Math.min(100,Math.round((baseGrandSumR/filled)/dayMax*100))+'%':'—';
+  const pctNum=filled>0?Math.min(100,Math.round((baseGrandSumR/filled)/dayMax*100)):null;
+  const pctDay=pctNum!==null?pctNum+'%':'—';
   const maxVal=Math.max(...dt,1);
-  const bars=dt.map((v,i)=>{const h=maxVal>0?Math.round((v/maxVal)*110):0;const col=v===0?'#e2d9c8':v>=maxVal*0.8?'#0f4a28':v>=maxVal*0.5?'#1a6b3c':'#a8d8b8';return '<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px"><div style="font-size:9px;font-weight:700;color:#1a6b3c">'+(v>0?v:'')+'</div><div style="width:75%;background:'+col+';border-radius:4px 4px 0 0;height:'+h+'px;min-height:2px"></div><div style="font-size:9px;color:#7a6a52">'+(i+1)+'</div></div>';}).join('');
+  const bars=dt.map((v,i)=>{
+    const h=maxVal>0?Math.round((v/maxVal)*110):0;
+    const lvl=v===0?'z':v>=maxVal*0.8?'h':v>=maxVal*0.5?'m':'l';
+    return '<div class="rp-bar"><div class="rp-bar-v">'+(v>0?v:'')+'</div><div class="rp-bar-f lv-'+lvl+'" style="height:'+h+'px"></div><div class="rp-bar-d">'+(i+1)+'</div></div>';
+  }).join('');
   const cats={};
   ROWS.forEach((r,ri)=>{if(!cats[r.cat])cats[r.cat]={earned:0,max:0,rows:[]};cats[r.cat].max+=Math.max(0,r.pts)*DAYS;let rowEarned=0;for(let d=1;d<=DAYS;d++)if((state[sk(ri,d)]||0)===1)rowEarned+=getPts(ri,d);cats[r.cat].earned+=rowEarned;cats[r.cat].rows.push({ri,ibada:r.ibada,pts:r.pts,earned:rowEarned,negative:r.negative||false});});
   let catsHtml='';
-  Object.entries(cats).forEach(([cat,info])=>{const catPct=info.max>0?Math.round(info.earned/info.max*100):0;let rowsHtml='';info.rows.forEach(row=>{const dayDots=Array.from({length:DAYS},(_,di)=>{const v=state[sk(row.ri,di+1)]||0;const bg=v===1?'#d4f4e2':v===2?'#fcd5d5':'#f0f0f0';const color=v===1?'#1a6b3c':v===2?'#c0392b':'#ccc';const sym=v===1?'✓':v===2?'✗':'';return '<div style="width:16px;height:16px;background:'+bg+';border-radius:3px;font-size:8px;font-weight:700;color:'+color+';display:flex;align-items:center;justify-content:center">'+sym+'</div>';}).join('');rowsHtml+='<div style="display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;background:#faf8f3;margin-bottom:3px"><div style="flex:1;font-size:11px;color:'+(row.negative?'#ef4444':'#2c2416')+'">'+row.ibada+'</div><div style="display:flex;gap:2px">'+dayDots+'</div><div style="width:28px;text-align:center;font-size:11px;font-weight:700;color:'+(row.negative?'#ef4444':'#1a6b3c')+'">'+row.earned+'</div></div>';});catsHtml+='<div style="margin-bottom:12px"><div style="background:#1a6b3c;color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;margin-bottom:6px;display:flex;justify-content:space-between"><span>'+cat+'</span><span>'+info.earned+' نقطة ('+catPct+'%)</span></div>'+rowsHtml+'</div>';});
-  const counterHtml=counterVal>0?'<div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #e2d9c8;margin-bottom:1.2rem"><div style="font-size:13px;font-weight:700;color:#1a6b3c;margin-bottom:8px">📖 أخذ موعد تسميع قرآن</div><div style="font-size:13px;color:#2c2416">عدد المرات: <b>'+counterVal+'</b> = <b style="color:#1a6b3c">'+(counterVal*5)+'</b> نقطة</div></div>':'';
-  const rHtml='<div style="background:linear-gradient(135deg,#0f4a28,#1a6b3c);color:#fff;padding:1.4rem;border-radius:14px;text-align:center;margin-bottom:1.2rem"><div style="font-size:13px;color:#a8e6c0;margin-bottom:4px">بسم الله الرحمن الرحيم</div><div style="font-size:20px;font-weight:800">تقرير برنامج عبادة</div><div style="font-size:13px;opacity:.8;margin-top:3px">'+name+'</div></div>'
-  +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px"><div style="background:#fff;border-radius:10px;padding:12px;text-align:center;border:1px solid #e2d9c8"><div style="font-size:24px;font-weight:800;color:#1a6b3c">'+grand+'</div><div style="font-size:10px;color:#7a6a52">المجموع</div></div><div style="background:#fff;border-radius:10px;padding:12px;text-align:center;border:1px solid #e2d9c8"><div style="font-size:24px;font-weight:800;color:#1a6b3c">'+avg+'</div><div style="font-size:10px;color:#7a6a52">المعدل</div></div><div style="background:#fff;border-radius:10px;padding:12px;text-align:center;border:1px solid #e2d9c8"><div style="font-size:24px;font-weight:800;color:#1a6b3c">'+filled+'<span style="font-size:14px;color:#7a6a52">/'+DAYS+'</span></div><div style="font-size:10px;color:#7a6a52">الأيام</div></div></div>'
-  +'<div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;padding:12px;text-align:center;border:1px solid #1a6b3c;margin-bottom:1.2rem"><div style="font-size:22px;font-weight:800;color:#0f4a28">'+pctDay+'</div><div style="font-size:10px;color:#7a6a52">📊 معدل اليوم من 100</div></div>'
-  +'<div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #e2d9c8;margin-bottom:1.2rem"><div style="font-size:13px;font-weight:700;color:#1a6b3c;margin-bottom:12px">📊 الأداء اليومي</div><div style="display:flex;gap:4px;align-items:flex-end;height:130px">'+bars+'</div></div>'
-  +'<div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #e2d9c8;margin-bottom:1.2rem"><div style="font-size:13px;font-weight:700;color:#1a6b3c;margin-bottom:12px">📋 تفصيل العبادات</div>'+catsHtml+'</div>'
+  Object.entries(cats).forEach(([cat,info])=>{
+    const catPct=info.max>0?Math.round(info.earned/info.max*100):0;
+    let rowsHtml='';
+    info.rows.forEach(row=>{
+      const dayDots=Array.from({length:DAYS},(_,di)=>{const v=state[sk(row.ri,di+1)]||0;const c=v===1?'d':v===2?'m':'e';const sym=v===1?'✓':v===2?'✗':'·';return '<span class="rp-dot '+c+'">'+sym+'</span>';}).join('');
+      rowsHtml+='<div class="rp-row"><div class="rp-row-name'+(row.negative?' neg':'')+'">'+row.ibada+'</div><div class="rp-dots">'+dayDots+'</div><div class="rp-row-pts'+(row.negative?' neg':'')+'">'+row.earned+'</div></div>';
+    });
+    catsHtml+='<div class="rp-cat"><div class="rp-cat-head"><span>'+cat+'</span><span>'+info.earned+' نقطة ('+catPct+'%)</span></div><div class="rp-cat-track"><div style="width:'+catPct+'%"></div></div>'+rowsHtml+'</div>';
+  });
+  const counterHtml=counterVal>0?'<div class="rp-card"><div class="rp-card-t">📖 أخذ موعد تسميع قرآن</div><div style="font-size:13px">عدد المرات: <b>'+counterVal+'</b> = <b style="color:var(--done-text)">'+(counterVal*5)+'</b> نقطة</div></div>':'';
+  const rHtml='<div class="rp-hero"><div class="rp-bsm">بسم الله الرحمن الرحيم</div><div class="rp-title">تقرير برنامج عبادة</div><div class="rp-name">'+esc(name)+'</div></div>'
+  +'<div class="rp-stats">'
+    +'<div class="rp-stat"><b>'+grand+'</b><span>المجموع</span></div>'
+    +'<div class="rp-stat"><b>'+avg+'</b><span>المعدل</span></div>'
+    +'<div class="rp-stat"><b>'+filled+'<small>/'+DAYS+'</small></b><span>الأيام</span></div>'
+  +'</div>'
+  +'<div class="rp-pct"><div class="rp-pct-head"><span>📊 معدل اليوم من 100</span><b>'+pctDay+'</b></div><div class="pct-track"><div class="pct-fill" style="width:'+(pctNum||0)+'%"></div></div></div>'
+  +'<div class="rp-card"><div class="rp-card-t">📊 الأداء اليومي</div><div class="rp-bars">'+bars+'</div></div>'
+  +'<div class="rp-card"><div class="rp-card-t">📋 تفصيل العبادات</div>'+catsHtml+'</div>'
   +counterHtml
-  +'<div style="text-align:center;padding-bottom:1rem"><button onclick="window.print()" style="font-family:inherit;font-size:13px;padding:10px 24px;background:#1a6b3c;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨️ طباعة</button></div>';
+  +'<div class="rp-print"><button class="btn btn-send" onclick="window.print()">🖨️ طباعة</button></div>';
   let ov=document.getElementById('rptOv');if(ov)ov.remove();
-  ov=document.createElement('div');ov.id='rptOv';ov.style.cssText="position:fixed;inset:0;z-index:9000;background:#fdfaf5;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:'Amiri',serif";
-  const cb=document.createElement('div');cb.style.cssText='position:sticky;top:0;z-index:9999;background:#0f4a28;padding:10px 14px;display:flex;justify-content:space-between;align-items:center';
-  cb.innerHTML='<span style="color:#fff;font-size:13px;font-weight:700">📊 تقريري</span><button onclick="document.getElementById(\'rptOv\').remove()" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-family:inherit;font-size:12px;cursor:pointer">✕ إغلاق</button>';
-  const ct=document.createElement('div');ct.style.cssText='padding:0 1rem';ct.innerHTML=rHtml;
+  ov=document.createElement('div');ov.id='rptOv';ov.className='rp-overlay';
+  const cb=document.createElement('div');cb.className='rp-top';
+  cb.innerHTML='<span>📊 تقريري</span><button onclick="document.getElementById(\'rptOv\').remove()">✕ إغلاق</button>';
+  const ct=document.createElement('div');ct.className='rp-content';ct.innerHTML=rHtml;
   ov.appendChild(cb);ov.appendChild(ct);document.body.appendChild(ov);
 }
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 document.getElementById('userName').addEventListener('input',save);
 load();build();buildGoalsSection();
-
 </script>
-
-
-
 
 <div id="pwaUpdateToast" class="update-toast">
   <span>يوجد تحديث جديد للتطبيق</span>
@@ -613,6 +725,5 @@ load();build();buildGoalsSection();
   });
 })();
 </script>
-
 </body>
 </html>
