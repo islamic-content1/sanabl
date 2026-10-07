@@ -263,7 +263,7 @@ button,input,select{font-family:inherit}
   <div class="admin-panel-title">⚙️ إدارة البنات</div>
   <select id="adminGirlSelect"><option value="">اختاري اسم البنت...</option></select>
   <button class="admin-btn admin-del" onclick="deleteSelectedGirl()">حذف البنت نهائياً من السجل</button>
-  <button class="admin-btn admin-danger" onclick="deleteAllGirls()">🗑️ حذف جميع البنات</button>
+  <button class="admin-btn admin-danger" id="deleteAllBtn" onclick="deleteAllGirls()">🗑️ حذف جميع البنات</button>
   <div class="admin-panel-note">تحذير: الحذف نهائي وسيزيل بيانات البنت أو جميع البنات من الشيت.</div>
 </div>
 <div class="admin-panel pairs" id="pairsPanel">
@@ -653,18 +653,35 @@ function deleteSelectedGirl(){
 async function deleteAllGirls(){
   if(!girlsData.length){showToast('لا يوجد بنات للحذف');return;}
   if(!confirm('متأكدة من حذف جميع البنات وبياناتهن نهائياً من الشيت؟'))return;
-  const names=[...new Set(girlsData.map(g=>String(g.name||'').trim()).filter(Boolean))];
+  if(deletingAll)return;deletingAll=true;
+  const btn=document.getElementById('deleteAllBtn');if(btn){btn.disabled=true;btn.textContent='جاري الحذف...';}
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const namesOf=list=>[...new Set((list||[]).map(g=>String(g.name||'').trim()).filter(Boolean))];
   showToast('جاري حذف جميع البنات...');
-  await Promise.allSettled(names.map(name=>
-    fetch(SCRIPT_URL+'?type=deleteGirl&name='+encodeURIComponent(name)+'&t='+Date.now(),{method:'GET',mode:'no-cors'})
-  ));
+  // 1) طلب واحد يمسح الكل من الشيت
+  try{await fetch(SCRIPT_URL+'?type=deleteAllGirls&t='+Date.now(),{method:'GET',mode:'no-cors'});}catch(e){}
+  // 2) التحقق: هل ضل حدا؟
+  let remaining=null;
+  try{remaining=namesOf(await loadGirlsFromScript());}catch(e){}
+  // 3) احتياط: حذف الباقي واحدة واحدة بالدور
+  if(remaining&&remaining.length){
+    for(let i=0;i<remaining.length;i++){
+      showToast('جاري الحذف '+(i+1)+' من '+remaining.length+'...');
+      try{await fetch(SCRIPT_URL+'?type=deleteGirl&name='+encodeURIComponent(remaining[i])+'&t='+Date.now(),{method:'GET',mode:'no-cors'});}catch(e){}
+      await wait(500);
+    }
+    try{remaining=namesOf(await loadGirlsFromScript());}catch(e){remaining=null;}
+  }
   pairGroups=emptyPairGroups();
   try{localStorage.removeItem(PAIRS_KEY);}catch(e){}
-  girlsData=[];
-  render();populateAdminSelect();buildPairGroups();
-  showToast('تم حذف جميع البنات ✓');
-  setTimeout(loadData,1200);
+  await loadData();
+  if(remaining===null)showToast('تعذر التأكد من الحذف، اضغطي تحديث');
+  else if(remaining.length)alert('ما انحذفن هالبنات، جربي مرة ثانية:\n'+remaining.join('، '));
+  else showToast('تم حذف جميع البنات ✓');
+  if(btn){btn.disabled=false;btn.textContent='🗑️ حذف جميع البنات';}
+  deletingAll=false;
 }
+let deletingAll=false;
 function toggleGirlCard(i){const b=document.getElementById('gbody_'+i);const arr=document.getElementById('garr_'+i);const open=b.style.display==='block';b.style.display=open?'none':'block';if(arr)arr.textContent=open?'▼':'▲';}
 function toggleDetails(i,btn){const d=document.getElementById('details_'+i);d.classList.toggle('open');const s=btn.querySelector('span:last-child');if(s)s.textContent=d.classList.contains('open')?'▲':'▼';}
 function togglePanel(id,btn){const d=document.getElementById(id);if(!d)return;const isOpen=d.style.display==='block';d.style.display=isOpen?'none':'block';const s=btn.querySelector('span:last-child');if(s)s.textContent=isOpen?'▼':'▲';}
