@@ -1,116 +1,243 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نتائج برنامج عبادة</title>
+<script>
+// تطبيق الوضع (ليلي/نهاري) قبل رسم الصفحة لتجنب الوميض
+(function(){var t='light';try{t=localStorage.getItem('ibada_theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');}catch(e){}document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--gD:#1a6b3c;--gDD:#0f4a28;--gL:#d4f4e2;--gM:#5cb87a;--rL:#fcd5d5;--rD:#c0392b;--gold:#b8860b;--bg:#fdfaf5;--sf:#ffffff;--bd:#e2d9c8;--tx:#2c2416;--mu:#7a6a52;--done-bg:#d4f4e2;--done-border:#5cb87a;--done-text:#1a6b3c;--sh:0 2px 16px rgba(0,0,0,.08)}
-*{box-sizing:border-box;margin:0;padding:0}html,body{overflow-x:hidden;width:100%}
-body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--tx);padding:1rem .6rem 4rem}
-.hdr{text-align:center;padding:1.4rem .8rem;background:linear-gradient(135deg,var(--gDD),var(--gD));border-radius:16px;color:#fff;margin-bottom:1.1rem;box-shadow:var(--sh)}
-.bsm{font-size:15px;color:var(--gold);margin-bottom:5px}
-.hdr h1{font-size:23px;font-weight:700;color:#d4a017;font-family:'Amiri',serif}
-.hdr p{font-size:12px;opacity:.8}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:1rem}
-.sc{background:var(--sf);border-radius:12px;padding:11px 6px;text-align:center;border:1px solid var(--bd);box-shadow:0 1px 6px rgba(0,0,0,.05)}
-.sv{font-size:22px;font-weight:700;color:var(--gD);line-height:1}
-.sl{font-size:10px;color:var(--mu);margin-top:2px}
+/* ===== ألوان الوضع النهاري ===== */
+:root{
+  --gD:#1a6b3c;--gDD:#0f4a28;--gL:#d4f4e2;--gM:#5cb87a;--gSoft:#e8f6ee;--gSoftBd:#a8d8b8;
+  --th-bg:#1a6b3c;--th-bg2:#0f4a28;
+  --rL:#fcd5d5;--rD:#c0392b;--rSoft:#fff0f0;--danger:#c0392b;
+  --gold:#b8860b;--goldSoft:#fffbea;--goldBd:#f0c040;--goldTx:#856404;
+  --bg:#f6f3ec;--sf:#ffffff;--sf2:#faf8f3;--bd:#e7dfcf;--tx:#2c2416;--mu:#7a6a52;
+  --done-bg:#d9f3e3;--done-border:#5cb87a;--done-text:#1a6b3c;
+  --empty-bg:#f2efe8;--empty-tx:#b9b2a5;--track:#e3ece4;--cell-bd:#e5eee5;
+  --t1:linear-gradient(135deg,#fef9e7,#fef3cd);--t1bd:#f0c040;
+  --t2:linear-gradient(135deg,#f8f9fa,#e9ecef);--t2bd:#adb5bd;
+  --t3:linear-gradient(135deg,#fdf5ed,#f5e6d3);--t3bd:#cd9a6c;
+  --hdr-from:#0f4a28;--hdr-to:#1f7a46;
+  --sh:0 1px 2px rgba(30,40,30,.04),0 6px 20px rgba(30,40,30,.06);
+  --sh-lg:0 16px 48px rgba(0,0,0,.2);
+  color-scheme:light;
+}
+/* ===== ألوان الوضع الليلي ===== */
+[data-theme="dark"]{
+  --gD:#2f9e5e;--gDD:#1b5e38;--gL:#1d4630;--gM:#3f9a65;--gSoft:#1a2e22;--gSoftBd:#2f5a40;
+  --th-bg:#174d2f;--th-bg2:#103a23;
+  --rL:#4a2426;--rD:#ff9d93;--rSoft:#2e1b1c;--danger:#d64a3e;
+  --gold:#e3b54f;--goldSoft:#2a2414;--goldBd:#8a6d22;--goldTx:#f0c95e;
+  --bg:#0e1411;--sf:#161f1a;--sf2:#1b2620;--bd:#2a3830;--tx:#e6ede8;--mu:#93a598;
+  --done-bg:#1d4630;--done-border:#3f8f5f;--done-text:#8fe3b0;
+  --empty-bg:#1e2823;--empty-tx:#56645b;--track:#24312a;--cell-bd:#243029;
+  --t1:linear-gradient(135deg,#2e2810,#3a3112);--t1bd:#8a6d22;
+  --t2:linear-gradient(135deg,#1f2427,#272d31);--t2bd:#59636b;
+  --t3:linear-gradient(135deg,#2c2016,#36281b);--t3bd:#8a6444;
+  --hdr-from:#0b2e1b;--hdr-to:#14472b;
+  --sh:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden;width:100%}
+body{font-family:'Tajawal',system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--tx);padding:1rem .7rem 4rem;transition:background .25s,color .25s;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit}
+.wrap{max-width:820px;margin:0 auto}
+
+/* ===== الهيدر ===== */
+.hdr{position:relative;text-align:center;padding:1.5rem 1rem 1.3rem;background:linear-gradient(145deg,var(--hdr-from),var(--hdr-to));border-radius:22px;color:#fff;margin-bottom:1rem;box-shadow:var(--sh);overflow:hidden}
+.hdr::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 18%,rgba(240,192,64,.22),transparent 42%),radial-gradient(circle at 88% 92%,rgba(255,255,255,.08),transparent 45%);pointer-events:none}
+.hdr::after{content:"✦";position:absolute;right:16px;top:12px;color:rgba(240,192,64,.45);font-size:16px}
+.hdr>*{position:relative}
+.hdr .theme-toggle{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.hdr .theme-toggle:active{transform:scale(.92)}
+.bsm{font-family:'Amiri',serif;font-size:15px;color:#f0d68a;margin-bottom:2px}
+.hdr h1{font-family:'Amiri',serif;font-size:28px;font-weight:700;color:#f3c74a;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hdr-divider{width:80px;height:2px;margin:6px auto 8px;background:linear-gradient(90deg,transparent,#f0c040,transparent)}
+.hdr p{font-size:12.5px;opacity:.85}
+
+/* ===== الإحصائيات والأزرار ===== */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.sc{background:var(--sf);border-radius:14px;padding:12px 6px;text-align:center;border:1px solid var(--bd);box-shadow:var(--sh)}
+.sv{font-size:24px;font-weight:800;color:var(--done-text);line-height:1.1}
+.sl{font-size:10.5px;color:var(--mu);margin-top:3px}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.8rem}
-.btn{font-family:inherit;font-size:13px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;border:none;flex:1;text-align:center}
-.btn-r{background:var(--gD);color:#fff}.btn-r.loading{background:var(--gM)}.btn-x{background:#217346;color:#fff}.btn-admin{background:#fff8e1;color:#856404;border:1.5px solid #f0c040}.btn-pairs{background:linear-gradient(135deg,#0f4a28,#1a6b3c);color:#fff;border:1.5px solid var(--gD)}
+.btn{font-size:13px;font-weight:700;padding:11px;border-radius:12px;cursor:pointer;border:none;text-align:center;transition:transform .12s,opacity .15s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn-r{background:linear-gradient(90deg,var(--gD),var(--gDD));color:#fff;box-shadow:0 4px 14px rgba(26,107,60,.25)}.btn-r.loading{opacity:.75}
+.btn-x{background:#217346;color:#fff}
+.btn-admin{background:var(--goldSoft);color:var(--goldTx);border:1.5px solid var(--goldBd)}
+.btn-pairs{background:var(--sf);color:var(--done-text);border:1.5px solid var(--done-border)}
 .last-up{text-align:center;font-size:11px;color:var(--mu);margin-bottom:1rem}
-.card,.girl-card{background:var(--sf);border-radius:14px;border:1px solid var(--bd);margin-bottom:14px;box-shadow:var(--sh);overflow:hidden}
-.card{padding:12px}
-.card-t{font-size:13px;font-weight:700;color:var(--gD);margin-bottom:10px}
+
+/* ===== الكروت ===== */
+.card,.girl-card{background:var(--sf);border-radius:16px;border:1px solid var(--bd);margin-bottom:14px;box-shadow:var(--sh);overflow:hidden}
+.card{padding:13px}
+.card-t{font-size:14px;font-weight:800;color:var(--done-text);margin-bottom:10px}
 .bars-scroll{overflow-x:auto;overflow-y:hidden;padding:4px 0 8px;touch-action:pan-x;-webkit-overflow-scrolling:touch;scrollbar-color:var(--gM) transparent}
 .bars-scroll::-webkit-scrollbar{height:5px}.bars-scroll::-webkit-scrollbar-thumb{background:var(--gM);border-radius:10px}
-.bars{display:flex;gap:8px;align-items:flex-end;height:110px;min-width:max-content;padding:0 2px}
-.bi{display:flex;flex-direction:column;align-items:center;flex:0 0 48px;gap:2px}
+.bars{display:flex;gap:8px;align-items:flex-end;height:120px;min-width:max-content;padding:0 2px}
+.bi{display:flex;flex-direction:column;align-items:center;flex:0 0 48px;gap:3px}
 .scroll-hint{text-align:center;color:var(--mu);font-size:9.5px;margin-top:2px}
-.bf{width:100%;border-radius:4px 4px 0 0;min-height:3px;background:var(--gD)}
-.bv{font-size:9px;font-weight:700;color:var(--gD)}
-.bn{font-size:8px;color:var(--mu);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
-.rank-item{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:10px;margin-bottom:6px;border:1px solid var(--bd);background:#fff}
-.rank-item.t1{background:linear-gradient(135deg,#fef9e7,#fef3cd);border-color:#f0c040}
-.rank-item.t2{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-color:#adb5bd}
-.rank-item.t3{background:linear-gradient(135deg,#fdf5ed,#f5e6d3);border-color:#cd9a6c}
-.rnum{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;background:var(--mu)}
+.bf{width:100%;border-radius:7px 7px 2px 2px;min-height:3px;background:linear-gradient(180deg,var(--gM),var(--gD))}
+.bv{font-size:9.5px;font-weight:800;color:var(--done-text)}
+.bn{font-size:9px;color:var(--mu);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
+
+/* ===== الترتيب ===== */
+.rank-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:12px;margin-bottom:6px;border:1px solid var(--bd);background:var(--sf)}
+.rank-item.t1{background:var(--t1);border-color:var(--t1bd)}
+.rank-item.t2{background:var(--t2);border-color:var(--t2bd)}
+.rank-item.t3{background:var(--t3);border-color:var(--t3bd)}
+.rnum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;background:var(--mu)}
 .r1{background:linear-gradient(135deg,#d4a017,#f0c040)}.r2{background:linear-gradient(135deg,#7a8288,#adb5bd)}.r3{background:linear-gradient(135deg,#8B4513,#cd9a6c)}
-.rinfo{flex:1}.rname{font-size:13px;font-weight:700}.rmeta{font-size:10px;color:var(--mu)}
-.rtrack{background:#e0ece0;border-radius:10px;height:5px;overflow:hidden;margin-top:4px}
+.rinfo{flex:1;min-width:0}.rname{font-size:13.5px;font-weight:800}.rmeta{font-size:10.5px;color:var(--mu)}
+.rtrack{background:var(--track);border-radius:10px;height:6px;overflow:hidden;margin-top:5px}
 .rfill{height:100%;background:linear-gradient(90deg,var(--gM),var(--gD));border-radius:10px}
-.rpts{font-size:15px;font-weight:700;color:var(--gD)}
-.admin-panel{display:none;background:var(--sf);border:1.5px solid #f0c040;border-radius:14px;padding:12px;margin-bottom:1rem;box-shadow:var(--sh)}.admin-panel.open{display:block}
-.admin-panel-title{font-size:13px;font-weight:700;color:#856404;margin-bottom:8px}
-.admin-panel select{font-family:inherit;font-size:13px;border:1.5px solid var(--bd);border-radius:9px;padding:9px;background:#fff;color:var(--tx);outline:none;width:100%}
-.admin-btn{font-family:inherit;font-size:12px;font-weight:700;border-radius:9px;padding:10px;border:none;cursor:pointer;width:100%;margin-top:8px}
-.admin-del{background:#fff8e1;color:#856404;border:1.5px solid #f0c040}
-.admin-panel-note{font-size:10px;color:var(--mu);line-height:1.6;margin-top:7px;text-align:center}
-.pairs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.pair-card{background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:10px}.pair-title{font-size:12px;font-weight:700;color:var(--gD);margin-bottom:7px}.pair-card select{margin-bottom:6px}.pair-summary{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;min-height:24px}.pair-chip{background:#e8f6ee;color:var(--gD);border:1px solid #a8d8b8;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:700}.pair-total{margin-top:7px;padding:8px;border-radius:9px;background:linear-gradient(135deg,#0f4a28,#1a6b3c);color:#fff;text-align:center;font-size:11px}.pair-total b{display:block;font-size:20px;line-height:1.2}.pairs-save{background:var(--gD);color:#fff}.pairs-empty{color:var(--mu);font-size:10px;padding:3px 0}
-.cat-rank-btn,.toggle-btn{width:100%;padding:8px 10px;background:#e8f6ee;color:var(--gDD);border:1px solid var(--gM);border-radius:9px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin:5px 0;text-align:right;display:flex;justify-content:space-between;align-items:center}
-.cat-rank-body{display:none;background:#fff;border:1px solid var(--bd);border-radius:9px;padding:8px;margin-bottom:8px}
-.how-box{background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;margin-bottom:1rem;overflow:hidden;box-shadow:var(--sh)}
-.how-hdr{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gD);color:#fff;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;text-align:right}
-.how-body{display:none;padding:12px 14px;font-size:11.5px;color:var(--tx)}
-.how-body .sec-title{font-weight:700;color:var(--gD);margin:8px 0 3px;font-size:12px}
-.how-body .row{display:flex;justify-content:space-between;gap:8px;padding:3px 8px;border-radius:6px;background:var(--bg);margin-bottom:2px}
-.how-body .row span:last-child{font-weight:700;color:var(--gD);white-space:nowrap}
-.how-body .row.neg span:last-child{color:#ef4444}
-.ibada-rank{margin-bottom:8px}
-.ibada-rank-title{font-size:10.5px;color:var(--mu);font-weight:700;margin-bottom:4px}
-.rank-chip{display:inline-flex;align-items:center;gap:3px;background:#fff;border:1px solid #e8ece8;border-radius:12px;padding:2px 7px;font-size:10px;margin:2px}
-.rank-chip.first{background:#fef9e7;border-color:#f0c040}
-.gc-hdr{padding:12px 14px;background:linear-gradient(135deg,var(--gDD),var(--gD));display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.gc-name{font-size:15px;font-weight:700;color:#fff}
-.gc-pts{color:#a8e6c0;font-size:12px;font-weight:600}
-.gc-body{padding:11px 12px}
-.prog-row{display:flex;justify-content:space-between;font-size:10px;color:var(--mu);margin-bottom:3px}
-.prog-t{background:#e0ece0;border-radius:10px;height:6px;overflow:hidden;margin-bottom:8px}
+.rpts{font-size:16px;font-weight:800;color:var(--done-text)}
+
+/* ===== لوحات الإدارة والثنائيات ===== */
+.admin-panel{display:none;background:var(--sf);border:1.5px solid var(--goldBd);border-radius:16px;padding:13px;margin-bottom:1rem;box-shadow:var(--sh)}.admin-panel.open{display:block}
+.admin-panel.pairs{border-color:var(--done-border)}
+.admin-panel-title{font-size:14px;font-weight:800;color:var(--goldTx);margin-bottom:9px}
+.admin-panel.pairs .admin-panel-title{color:var(--done-text);font-size:15px}
+.admin-panel select{font-size:13px;border:1.5px solid var(--bd);border-radius:10px;padding:9px;background:var(--sf2);color:var(--tx);outline:none;width:100%}
+.admin-panel select:focus{border-color:var(--gD)}
+.admin-btn{font-size:12.5px;font-weight:700;border-radius:10px;padding:10px;border:none;cursor:pointer;width:100%;margin-top:8px}
+.admin-del{background:var(--goldSoft);color:var(--goldTx);border:1.5px solid var(--goldBd)}
+.admin-danger{background:var(--danger);color:#fff}
+.admin-panel-note{font-size:10.5px;color:var(--mu);line-height:1.7;margin-top:8px;text-align:center}
+.admin-panel.pairs .admin-panel-note{margin:0 0 10px}
+.pairs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.pair-card{background:var(--sf2);border:1px solid var(--bd);border-radius:14px;padding:11px}
+.pair-title{font-size:12.5px;font-weight:800;color:var(--done-text);margin-bottom:8px}
+.pair-card select{margin-bottom:6px}
+.pair-summary{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;min-height:24px}
+.pair-chip{background:var(--gSoft);color:var(--done-text);border:1px solid var(--gSoftBd);border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:700}
+.pair-total{margin-top:8px;padding:9px;border-radius:10px;background:linear-gradient(135deg,var(--th-bg2),var(--th-bg));color:#fff;text-align:center;font-size:11px}
+.pair-total b{display:block;font-size:21px;line-height:1.2}
+.pairs-save{background:linear-gradient(90deg,var(--gD),var(--gDD));color:#fff}
+.pairs-empty{color:var(--mu);font-size:10.5px;padding:3px 0}
+
+/* ===== أزرار الطي ===== */
+.cat-rank-btn,.toggle-btn{width:100%;padding:9px 11px;background:var(--gSoft);color:var(--done-text);border:1px solid var(--gSoftBd);border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;margin:5px 0;text-align:right;display:flex;justify-content:space-between;align-items:center}
+.cat-rank-body{display:none;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:9px;margin-bottom:8px}
+
+/* ===== كيف تحسب النقاط ===== */
+.how-box{background:var(--sf);border:1px solid var(--bd);border-radius:16px;margin-bottom:1rem;overflow:hidden;box-shadow:var(--sh)}
+.how-hdr{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:none;color:var(--done-text);border:none;cursor:pointer;font-size:13.5px;font-weight:800;text-align:right}
+.how-hdr span:last-child{font-size:11px;color:var(--mu)}
+.how-body{display:none;padding:0 14px 12px;font-size:12px;color:var(--tx);border-top:1px solid var(--bd)}
+.how-body .sec-title{font-weight:800;color:var(--gold);margin:10px 0 4px;font-size:12px}
+.how-body .row{display:flex;justify-content:space-between;gap:8px;padding:6px 10px;border-radius:9px;background:var(--sf2);margin-bottom:3px}
+.how-body .row span:last-child{font-weight:800;color:var(--done-text);white-space:nowrap}
+.how-note{font-size:10px;color:var(--mu);line-height:1.8;margin:5px 4px}
+
+.ibada-rank{margin-bottom:9px}
+.ibada-rank-title{font-size:11px;color:var(--mu);font-weight:800;margin-bottom:4px}
+.rank-chip{display:inline-flex;align-items:center;gap:3px;background:var(--sf2);border:1px solid var(--bd);border-radius:12px;padding:3px 8px;font-size:10.5px;margin:2px}
+.rank-chip.first{background:var(--goldSoft);border-color:var(--goldBd)}
+.rank-chip .pts{color:var(--done-text);font-weight:800}
+.rank-empty{font-size:10.5px;color:var(--empty-tx)}
+
+/* ===== كرت البنت ===== */
+.gc-hdr{padding:12px 14px;background:linear-gradient(135deg,var(--th-bg2),var(--th-bg));display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:8px}
+.gc-name{font-size:15px;font-weight:800;color:#fff}
+.gc-pts{color:#a8e6c0;font-size:12.5px;font-weight:700;white-space:nowrap}
+.gc-right{display:flex;align-items:center;gap:6px}
+.gc-arr{color:#a8e6c0;font-size:12px}
+.pct-label{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:2px 8px;font-size:11px;font-weight:800;color:#fff}
+.gc-body{padding:12px}
+.pct-badge{text-align:center;background:var(--gSoft);border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin-bottom:9px}
+.pct-badge b{display:block;font-size:20px;font-weight:800}
+.pct-badge span{font-size:10px;color:var(--mu)}
+.prog-row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mu);margin-bottom:4px}
+.prog-t{background:var(--track);border-radius:10px;height:7px;overflow:hidden;margin-bottom:9px}
 .prog-f{height:100%;background:linear-gradient(90deg,var(--gM),var(--gD));border-radius:10px}
-.days-row{display:flex;gap:3px;margin-bottom:9px;flex-wrap:wrap}
-.dd{width:28px;height:28px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:1px solid var(--bd)}
-.dd.f{background:var(--done-bg);border-color:var(--done-border);color:var(--done-text)}.dd.e{background:#f0f0f0;color:#bbb}
+.days-row{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+.dd{width:30px;height:30px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;border:1px solid var(--bd)}
+.dd.f{background:var(--done-bg);border-color:var(--done-border);color:var(--done-text)}
+.dd.e{background:var(--empty-bg);color:var(--empty-tx)}
 .dd .dn{font-size:7px;color:inherit;opacity:.7}
-.details{display:none;margin-top:8px}
+.details{display:none;margin-top:8px;overflow-x:auto}
 .details.open{display:block}
-.custom-box{margin-bottom:9px;background:#fffdf0;border:1px solid #f0c040;border-radius:10px;padding:8px 10px}
-.custom-title{font-size:10px;font-weight:700;color:#856404;margin-bottom:5px}
+.gc-last{font-size:10.5px;color:var(--mu);margin-top:8px;text-align:left}
+.custom-box{margin-bottom:9px;background:var(--goldSoft);border:1px solid var(--goldBd);border-radius:10px;padding:8px 10px}
+.custom-title{font-size:10.5px;font-weight:800;color:var(--goldTx);margin-bottom:5px}
 .chips{display:flex;flex-wrap:wrap;gap:4px}
-.chip{background:#fff;border:1px solid #f0c040;color:#856404;font-size:10px;padding:2px 8px;border-radius:10px}
-.detail-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9px;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.detail-table th{background:var(--gD);color:#fff;padding:5px 1px;border:1px solid var(--gDD);font-size:8.5px}
+.chip{background:var(--sf);border:1px solid var(--goldBd);color:var(--goldTx);font-size:10px;padding:2px 8px;border-radius:10px}
+
+/* ===== جدول التفاصيل ===== */
+.detail-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9px;border:1px solid var(--bd)}
+.detail-table th{background:var(--th-bg);color:#fff;padding:6px 1px;border:1px solid var(--th-bg2);font-size:8.5px}
 .detail-table th.catH{width:18px}.detail-table th.ibH{width:28%}.detail-table th.ptsH{width:22px}.detail-table th.dayH{width:5.5%}
-.detail-table td{padding:3px 1px;border:1px solid #e5eee5;text-align:center;vertical-align:middle}
-.detail-table td.ibada{text-align:right;font-weight:700;font-size:9.5px;line-height:1.25;overflow:hidden}
-.detail-table td.cat{background:#e8f6ee;color:var(--gDD);font-weight:700;writing-mode:vertical-lr;text-orientation:mixed;font-size:8px;max-width:18px}
-.id{width:17px;height:17px;border-radius:4px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:0.5px solid var(--bd)}
-.id.d{background:var(--done-bg);color:var(--done-text);border-color:var(--done-border)}.id.m{background:var(--rL);color:var(--rD)}.id.e{background:#f5f5f5;color:#ccc}
+.detail-table td{padding:3px 1px;border:1px solid var(--cell-bd);text-align:center;vertical-align:middle}
+.detail-table td.ibada{text-align:right;font-weight:700;font-size:9.5px;line-height:1.3;overflow:hidden}
+.detail-table td.cat{background:var(--gSoft);color:var(--done-text);font-weight:800;writing-mode:vertical-lr;text-orientation:mixed;font-size:8px;max-width:18px}
+.detail-table .neg{color:#ef4444}
+.detail-table tr.dt-total td{background:var(--th-bg);color:#fff;font-weight:800;font-size:9px}
+.detail-table tr.dt-total td.lbl{text-align:right;padding-right:4px;background:var(--th-bg2)}
+.detail-table tr.dt-counter td{background:var(--goldSoft);color:var(--goldTx);font-weight:800;font-size:9px}
+.detail-table tr.dt-counter td.lbl{text-align:right;padding-right:4px}
+.detail-table tr.dt-pct td{background:var(--gSoft);font-weight:800;font-size:9px;border-top:2px solid var(--gM)}
+.detail-table tr.dt-pct td.lbl{text-align:right;padding-right:4px;color:var(--done-text)}
+.id{width:17px;height:17px;border-radius:4px;font-size:8px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.id.d{background:var(--done-bg);color:var(--done-text);border:1px solid var(--done-border)}
+.id.m{background:var(--rL);color:var(--rD)}
+.id.e{background:var(--empty-bg);color:var(--empty-tx)}
 .empty{text-align:center;padding:3rem 1rem;color:var(--mu);font-size:13px;line-height:2}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--gD);color:#fff;font-size:13px;padding:9px 22px;border-radius:30px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap}
+
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--th-bg2);color:#fff;font-size:13px;font-weight:700;padding:10px 22px;border-radius:30px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:var(--sh-lg)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.completion-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;margin-bottom:1rem;box-shadow:var(--sh);overflow:hidden}
-.completion-head{width:100%;border:0;background:var(--gD);color:#fff;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer}.completion-body{padding:12px}
-.completion-title{font-size:14px;font-weight:800;color:var(--gDD);margin-bottom:4px}.completion-help{font-size:10px;color:var(--mu);line-height:1.6;margin-bottom:10px}
-.day-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}.day-tab{min-width:34px;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:8px;padding:6px 8px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}.day-tab.active{background:var(--gD);color:#fff;border-color:var(--gD)}
-.worship-status{border:1px solid var(--bd);border-radius:11px;padding:10px;margin-top:8px;background:#fff}.worship-status-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.worship-status-name{font-size:12px;font-weight:800;color:var(--tx)}.done-count{background:#dff5e8;color:var(--gDD);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:800;white-space:nowrap}
-.status-line{font-size:10px;line-height:1.8;padding:5px 7px;border-radius:7px;margin-top:4px}.status-line.done{background:#edf9f2;color:var(--gDD)}.status-line.missed{background:#fff0f0;color:var(--rD)}.status-line.pending{background:#f5f2ec;color:var(--mu)}.status-label{font-weight:800}
+
+/* ===== متابعة الإنجاز ===== */
+.completion-card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;margin-bottom:1rem;box-shadow:var(--sh);overflow:hidden}
+.completion-head{width:100%;border:0;background:none;color:var(--done-text);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:800;cursor:pointer}
+.completion-head span:last-child{font-size:11px;color:var(--mu)}
+.completion-body{padding:12px;border-top:1px solid var(--bd)}
+.completion-title{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.completion-help{font-size:10.5px;color:var(--mu);line-height:1.7;margin-bottom:10px}
+.day-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
+.day-tab{min-width:36px;border:1px solid var(--bd);background:var(--sf2);color:var(--tx);border-radius:9px;padding:7px 8px;font-size:11.5px;font-weight:800;cursor:pointer}
+.day-tab.active{background:var(--gD);color:#fff;border-color:var(--gD)}
+.worship-status{border:1px solid var(--bd);border-radius:12px;padding:10px;margin-top:8px;background:var(--sf2)}
+.worship-status-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.worship-status-name{font-size:12.5px;font-weight:800;color:var(--tx)}
+.done-count{background:var(--done-bg);color:var(--done-text);border-radius:20px;padding:3px 10px;font-size:10.5px;font-weight:800;white-space:nowrap}
+.status-line{font-size:10.5px;line-height:1.8;padding:5px 8px;border-radius:8px;margin-top:4px}
+.status-line.done{background:var(--gSoft);color:var(--done-text)}
+.status-line.missed{background:var(--rSoft);color:var(--rD)}
+.status-line.pending{background:var(--empty-bg);color:var(--mu)}
+.status-label{font-weight:800}
 </style>
-<link rel="manifest" href="manifest-manager.json?v=2026.09.27.1">
+<link rel="manifest" href="manifest-manager.json?v=2026.10.07.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="مسؤولة العبادة">
-<meta name="theme-color" content="#1a6b3c">
-<link rel="apple-touch-icon" href="icon.png?v=2026.09.27.1">
+<meta name="theme-color" id="themeColorMeta" content="#1a6b3c">
+<link rel="apple-touch-icon" href="icon.png?v=2026.10.07.1">
 </head>
 <body>
-<div class="hdr"><div class="bsm">بسم الله الرحمن الرحيم</div><h1>🌙 النتائج</h1><p>أداء البنات في برنامج العبادة</p></div>
+<main class="wrap">
+<header class="hdr">
+  <button type="button" class="theme-toggle" id="themeBtn" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي">🌙</button>
+  <div class="bsm">بسم الله الرحمن الرحيم</div>
+  <h1>🌙 النتائج</h1>
+  <div class="hdr-divider"></div>
+  <p>أداء البنات في برنامج العبادة</p>
+</header>
+
 <div class="how-box">
-  <button class="how-hdr" onclick="togglePanel('managerHowBody',this)"><span>كيف تُحسب النقاط؟</span><span>▼</span></button>
+  <button class="how-hdr" onclick="togglePanel('managerHowBody',this)"><span>💡 كيف تُحسب النقاط؟</span><span>▼</span></button>
   <div class="how-body" id="managerHowBody">
     <div class="sec-title">الأذكار</div>
     <div class="row"><span>أذكار الصباح</span><span>5 نقاط</span></div>
@@ -118,10 +245,12 @@ body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:
     <div class="sec-title">القرآن</div>
     <div class="row"><span>قراءة ١٠ صفحات قرآن</span><span>10 نقاط</span></div>
     <div class="sec-title">الصلاة</div>
-    <div class="row"><span>كل صلاة مفروضة مع سنتها</span><span>5 نقاط</span></div>
-    <div style="font-size:9px;color:var(--mu);line-height:1.7;margin:3px 8px">الفجر: ركعتان قبليتان — الظهر: ركعتان قبليتان وركعتان بعديتان — العصر: ركعتان قبليتان — المغرب والعشاء: ركعتان بعديتان.</div>
+    <div class="row"><span>كل فرض</span><span>3 نقاط</span></div>
+    <div class="row"><span>سنة كل صلاة</span><span>2 نقاط</span></div>
+    <div class="how-note">السنن: الفجر ركعتان قبليتان — الظهر ركعتان قبليتان وركعتان بعديتان — العصر ركعتان قبليتان — المغرب والعشاء ركعتان بعديتان.</div>
   </div>
 </div>
+
 <div class="stats">
   <div class="sc"><div class="sv" id="stTotal">0</div><div class="sl">عدد البنات</div></div>
   <div class="sc"><div class="sv" id="stTop">—</div><div class="sl">أعلى مجموع</div></div>
@@ -129,26 +258,44 @@ body{font-family:'Amiri',system-ui,Tahoma,sans-serif;background:var(--bg);color:
 </div>
 <div class="btns"><button class="btn btn-r" id="refreshBtn" onclick="loadData()">↻ تحديث النتائج</button><button class="btn btn-pairs" onclick="togglePairsPanel()">👭 مجموع الثنائيات</button><button class="btn btn-admin" onclick="toggleAdminPanel()">⚙️ إدارة</button><button class="btn btn-x" onclick="exportExcel()">⬇ Excel</button></div>
 <div class="last-up" id="lastUp"></div>
+
 <div class="admin-panel" id="adminPanel">
   <div class="admin-panel-title">⚙️ إدارة البنات</div>
   <select id="adminGirlSelect"><option value="">اختاري اسم البنت...</option></select>
   <button class="admin-btn admin-del" onclick="deleteSelectedGirl()">حذف البنت نهائياً من السجل</button>
-  <div class="admin-panel-note">تحذير: سيتم إزالة البنت وجميع بياناتها من الشيت نهائياً.</div>
+  <button class="admin-btn admin-danger" onclick="deleteAllGirls()">🗑️ حذف جميع البنات</button>
+  <div class="admin-panel-note">تحذير: الحذف نهائي وسيزيل بيانات البنت أو جميع البنات من الشيت.</div>
 </div>
-<div class="admin-panel" id="pairsPanel">
-  <div class="admin-panel-title" style="font-size:15px;color:var(--gD)">👭 مجموع الثنائيات والثلاثيات</div>
-  <div class="admin-panel-note" style="margin:0 0 9px">اختاري بنتين لكل مجموعة، ويمكن إضافة بنت ثالثة. لا يمكن تكرار البنت في مجموعتين.</div>
+<div class="admin-panel pairs" id="pairsPanel">
+  <div class="admin-panel-title">👭 مجموع الثنائيات والثلاثيات</div>
+  <div class="admin-panel-note">اختاري بنتين لكل مجموعة، ويمكن إضافة بنت ثالثة. لا يمكن تكرار البنت في مجموعتين.</div>
   <div class="pairs-grid" id="pairsGrid"></div>
   <button class="admin-btn pairs-save" onclick="savePairGroups()">حفظ المجموعات</button>
 </div>
+
 <div id="completionSummary" class="completion-card">
   <button type="button" class="completion-head" onclick="toggleCompletionSummary()"><span>📋 متابعة إنجاز العبادات</span><span id="completionArrow">▼</span></button>
   <div id="completionSummaryBody" class="completion-body" style="display:none"></div>
 </div>
 <div id="main"><div class="empty">🌿<br>اضغطي "تحديث" لتحميل نتائج البنات</div></div>
+</main>
 <div id="toast"></div>
 
 <script>
+// ===== الوضع الليلي =====
+const THEME_KEY='ibada_theme';
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',t==='dark'?'#0b2e1b':'#1a6b3c');
+  const b=document.getElementById('themeBtn');if(b){b.textContent=t==='dark'?'☀️':'🌙';b.title=t==='dark'?'الوضع النهاري':'الوضع الليلي';}
+}
+function toggleTheme(){
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+  applyTheme(t);
+}
+applyTheme(document.documentElement.getAttribute('data-theme')||'light');
+
 const SHEET_ID='1Xcofz05IsgKCqpmoh3-Bywm0WjX2FDFhCmWt_x7Vdr4';
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzIkbxFUuXa8SGkoF1flg2t3uNJYx3xZZn5RlWj5NHjSBXYwemVq0rmCoYvV4-tWBb_HQ/exec';
 const DAYS=10;
@@ -158,11 +305,16 @@ const ROWS=[
   {cat:'الأذكار',ibada:'أذكار الصباح',pts:5,fixed:true},
   {cat:'الأذكار',ibada:'أذكار المساء',pts:5,fixed:true},
   {cat:'القرآن',ibada:'قراءة ١٠ صفحات قرآن',pts:10,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة الفجر وسنتها',pts:5,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة الظهر وسنتها',pts:5,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة العصر وسنتها',pts:5,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة المغرب وسنتها',pts:5,fixed:true},
-  {cat:'الصلاة',ibada:'صلاة العشاء وسنتها',pts:5,fixed:true},
+  {cat:'الصلاة',ibada:'فرض الفجر',pts:3,fixed:true},
+  {cat:'الصلاة',ibada:'سنة الفجر',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض الظهر',pts:3,fixed:true},
+  {cat:'الصلاة',ibada:'سنة الظهر',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض العصر',pts:3,fixed:true},
+  {cat:'الصلاة',ibada:'سنة العصر',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض المغرب',pts:3,fixed:true},
+  {cat:'الصلاة',ibada:'سنة المغرب',pts:2,fixed:true},
+  {cat:'الصلاة',ibada:'فرض العشاء',pts:3,fixed:true},
+  {cat:'الصلاة',ibada:'سنة العشاء',pts:2,fixed:true},
 ];
 
 const GOAL_LABELS={};
@@ -198,6 +350,9 @@ function getBasePts(g,ri,d){
 function calcDayMax(){
   return ROWS.reduce((sum,r)=>sum+Math.max(0,r.pts),0);
 }
+
+// لون النسبة حسب المستوى
+function pctColorVar(p){return p>=80?'var(--done-text)':p>=50?'var(--gold)':'var(--rD)';}
 
 function rowEarned(g,ri){let t=0;for(let d=1;d<=DAYS;d++)if(((g.state||{})[sk(ri,d)]||0)===1)t+=getPts(g,ri,d);return t;}
 function counterPoints(g){return (Number(g.counter)||0)*5;}
@@ -332,16 +487,7 @@ function topRankings(sorted,maxG){
     html+='<div class="rank-item '+cls+'"><div class="rnum '+ncls+'">'+rankMedal(rnk)+'</div><div class="rinfo"><div class="rname">'+esc(g.name)+'</div><div class="rmeta">المجموع: '+g.grand+' | من 100: '+(dayPct!==null?dayPct+'%':'—')+' | الأيام: '+g.filled+'/'+DAYS+'</div><div class="rtrack"><div class="rfill" style="width:'+pct+'%"></div></div></div><div class="rpts">'+g.grand+'</div></div>';
   });
   html+='</div></div>';
-  html+='<div class="card"><button class="cat-rank-btn" onclick="togglePanel(\'hundredRankingsBody\',this)"><span>📊 الأوائل حسب المعدل من 100</span><span>▼</span></button><div class="cat-rank-body" id="hundredRankingsBody">';
-  const byHundred=girlsData.map(g=>({g,score:calcGirlDayPct(g)})).filter(x=>x.score!==null).sort((a,b)=>b.score-a.score||Number(b.g.grand)-Number(a.g.grand));
-  if(!byHundred.length)html+='<div style="font-size:11px;color:var(--mu);text-align:center;padding:8px">لا يوجد أداء محسوب بعد</div>';
-  byHundred.forEach((item,i)=>{
-    const g=item.g,score=item.score;
-    const rnk=1+byHundred.filter((x,xi)=>xi<i&&x.score>score).length;
-    const cls=rankItemClass(rnk),ncls=rankNumClass(rnk);
-    html+='<div class="rank-item '+cls+'"><div class="rnum '+ncls+'">'+rankMedal(rnk)+'</div><div class="rinfo"><div class="rname">'+esc(g.name)+'</div><div class="rmeta">المعدل الأساسي: '+score+'% | المجموع: '+g.grand+' | الأيام: '+g.filled+'/'+DAYS+'</div><div class="rtrack"><div class="rfill" style="width:'+score+'%"></div></div></div><div class="rpts">'+score+'%</div></div>';
-  });
-  return html+'</div></div>';
+  return html;
 }
 
 function perIbadaRanking(){
@@ -353,8 +499,8 @@ function perIbadaRanking(){
       if(r.cat!==cat||r.negative)return;
       const ranked=girlsData.map(g=>({name:g.name,total:rowEarned(g,ri)})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
       html+='<div class="ibada-rank"><div class="ibada-rank-title">'+esc(r.ibada)+'</div>';
-      if(!ranked.length)html+='<span style="font-size:10px;color:#aaa">لا يوجد إنجاز بعد</span>';
-      ranked.forEach((x,i)=>{const rnk=1+ranked.filter((_,j)=>j<i&&ranked[j].total>x.total).length;html+='<span class="rank-chip '+(rnk===1?'first':'')+'">'+(rnk<=3?rankMedal(rnk):rnk+'.')+' <b>'+esc(x.name)+'</b> <span style="color:var(--gD);font-weight:700">'+x.total+'</span></span>';});
+      if(!ranked.length)html+='<span class="rank-empty">لا يوجد إنجاز بعد</span>';
+      ranked.forEach((x,i)=>{const rnk=1+ranked.filter((_,j)=>j<i&&ranked[j].total>x.total).length;html+='<span class="rank-chip '+(rnk===1?'first':'')+'">'+(rnk<=3?rankMedal(rnk):rnk+'.')+' <b>'+esc(x.name)+'</b> <span class="pts">'+x.total+'</span></span>';});
       html+='</div>';
     });
     html+='</div>';
@@ -382,14 +528,13 @@ function girlCard(g,gi,sorted,maxG){
       else if([15,16,17].includes(Number(ri))){shownVal=(Number(val)/2)+' صباحاً + '+(Number(val)/2)+' مساءً';}
       return '<span class="chip">'+esc(label)+': '+esc(shownVal)+'</span>';
     }).join('')+'</div></div>':'';
-  const pctColor=dayPct!==null?(dayPct>=80?'#1a6b3c':dayPct>=50?'#b8860b':'#c0392b'):'#aaa';
-  const pctBadge=dayPct!==null?'<div style="text-align:center;background:#e8f6ee;border:1px solid var(--bd);border-radius:10px;padding:6px 10px;margin-bottom:8px"><div style="font-size:18px;font-weight:700;color:'+pctColor+'">'+dayPct+'%</div><div style="font-size:9px;color:var(--mu)">معدل اليوم من 100</div></div>':'';
-  const pctLabel=dayPct!==null?'<span style="background:#e8f6ee;border:1px solid var(--bd);border-radius:8px;padding:2px 8px;font-size:11px;font-weight:700;color:'+pctColor+'">📊 '+dayPct+'%</span>':'';
-  const body=detailsTable(g)+'<div style="font-size:10px;color:var(--mu);margin-top:8px;text-align:left">آخر إرسال: '+esc(g.lastUpdate||'—')+'</div>';
+  const pctBadge=dayPct!==null?'<div class="pct-badge"><b style="color:'+pctColorVar(dayPct)+'">'+dayPct+'%</b><span>معدل اليوم من 100</span></div>':'';
+  const pctLabel=dayPct!==null?'<span class="pct-label">📊 '+dayPct+'%</span>':'';
+  const body=detailsTable(g)+'<div class="gc-last">آخر إرسال: '+esc(g.lastUpdate||'—')+'</div>';
   return '<div class="girl-card">'
     +'<div class="gc-hdr" onclick="toggleGirlCard('+gi+')">'
     +'<div class="gc-name">'+medal+' '+esc(g.name)+'</div>'
-    +'<div style="display:flex;align-items:center;gap:6px">'+pctLabel+'<div class="gc-pts">'+g.grand+' نقطة</div><span id="garr_'+gi+'" style="color:#a8e6c0;font-size:12px">▼</span></div>'
+    +'<div class="gc-right">'+pctLabel+'<div class="gc-pts">'+g.grand+' نقطة</div><span id="garr_'+gi+'" class="gc-arr">▼</span></div>'
     +'</div>'
     +'<div class="gc-body" id="gbody_'+gi+'" style="display:none">'
     +pctBadge+goalsHtml
@@ -411,8 +556,9 @@ function detailsTable(g){
     if(r.cat!==lastCat){html+='<td class="cat" rowspan="'+catRows[r.cat]+'">'+esc(r.cat)+'</td>';lastCat=r.cat;}
     const meta=r.note||'';
     const ptsLabel=''+r.pts;
-    html+='<td class="ibada" style="'+(r.negative?'color:#ef4444':'')+'">'+esc(r.ibada)+(meta?'<div style="font-size:8px;color:#b8860b;font-weight:400">'+esc(meta)+'</div>':'')+'</td>';
-    html+='<td style="'+(r.negative?'color:#ef4444':'')+'">'+ptsLabel+'</td>';
+    const negCls=r.negative?' neg':'';
+    html+='<td class="ibada'+negCls+'">'+esc(r.ibada)+(meta?'<div style="font-size:8px;color:var(--gold);font-weight:400">'+esc(meta)+'</div>':'')+'</td>';
+    html+='<td class="'+negCls.trim()+'">'+ptsLabel+'</td>';
     for(let d=1;d<=DAYS;d++){
       const v=(g.state&&g.state[sk(ri,d)])||0;
       const dpts=getPts(g,ri,d);
@@ -420,19 +566,19 @@ function detailsTable(g){
       let mark=v===1?'✓':v===2?'✗':'';
       html+='<td><span class="id '+(v===1?'d':v===2?'m':'e')+'" title="'+(v===1?dpts+' نقطة':'')+'">'+mark+'</span></td>';
     }
-    html+='<td><b style="'+(r.negative?'color:#ef4444':'')+'">'+earned+'</b></td></tr>';
+    html+='<td><b class="'+negCls.trim()+'">'+earned+'</b></td></tr>';
   });
-  html+='<tr style="background:var(--gD);color:#fff;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px;background:var(--gDD)">مجموع اليوم</td>';
+  html+='<tr class="dt-total"><td colspan="3" class="lbl">مجموع اليوم</td>';
   for(let d=1;d<=DAYS;d++){html+='<td>'+calcGirlDayBase(g,d)+'</td>';}
   html+='<td></td></tr>';
-  html+='<tr style="background:#fffdf0;color:#856404;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px">عداد التسميع</td><td colspan="10">'+(Number(g.counter)||0)+' مرة = '+counterPoints(g)+' نقطة</td><td></td></tr>';
-  html+='<tr style="background:#e8f6ee;font-weight:700;font-size:9px"><td colspan="3" style="text-align:right;padding-right:4px;color:var(--gDD);border-top:2px solid var(--gM)">معدل اليوم %</td>';
+  html+='<tr class="dt-counter"><td colspan="3" class="lbl">عداد التسميع</td><td colspan="10">'+(Number(g.counter)||0)+' مرة = '+counterPoints(g)+' نقطة</td><td></td></tr>';
+  html+='<tr class="dt-pct"><td colspan="3" class="lbl">معدل اليوم %</td>';
   for(let d=1;d<=DAYS;d++){
     const hasData=ROWS.some((_,ri)=>((g.state||{})[sk(ri,d)]||0)!==0);
-    if(hasData){const base=calcGirlDayBase(g,d);const pct=Math.min(100,Math.round(base/dayMax*100));const color=pct>=80?'var(--gD)':pct>=50?'#b8860b':'var(--rD)';html+='<td style="color:'+color+';font-weight:700;border-top:2px solid var(--gM)">'+pct+'%</td>';}
-    else{html+='<td style="color:#ccc;border-top:2px solid var(--gM)">—</td>';}
+    if(hasData){const base=calcGirlDayBase(g,d);const pct=Math.min(100,Math.round(base/dayMax*100));html+='<td style="color:'+pctColorVar(pct)+'">'+pct+'%</td>';}
+    else{html+='<td style="color:var(--empty-tx)">—</td>';}
   }
-  html+='<td style="border-top:2px solid var(--gM)"></td></tr>';
+  html+='<td></td></tr>';
   return html+'</tbody></table>';
 }
 
@@ -503,6 +649,22 @@ function deleteSelectedGirl(){
   document.body.appendChild(iframe);
   setTimeout(()=>{iframe.remove();showToast('تم الحذف ✓');loadData();},1500);
 }
+
+async function deleteAllGirls(){
+  if(!girlsData.length){showToast('لا يوجد بنات للحذف');return;}
+  if(!confirm('متأكدة من حذف جميع البنات وبياناتهن نهائياً من الشيت؟'))return;
+  const names=[...new Set(girlsData.map(g=>String(g.name||'').trim()).filter(Boolean))];
+  showToast('جاري حذف جميع البنات...');
+  await Promise.allSettled(names.map(name=>
+    fetch(SCRIPT_URL+'?type=deleteGirl&name='+encodeURIComponent(name)+'&t='+Date.now(),{method:'GET',mode:'no-cors'})
+  ));
+  pairGroups=emptyPairGroups();
+  try{localStorage.removeItem(PAIRS_KEY);}catch(e){}
+  girlsData=[];
+  render();populateAdminSelect();buildPairGroups();
+  showToast('تم حذف جميع البنات ✓');
+  setTimeout(loadData,1200);
+}
 function toggleGirlCard(i){const b=document.getElementById('gbody_'+i);const arr=document.getElementById('garr_'+i);const open=b.style.display==='block';b.style.display=open?'none':'block';if(arr)arr.textContent=open?'▼':'▲';}
 function toggleDetails(i,btn){const d=document.getElementById('details_'+i);d.classList.toggle('open');const s=btn.querySelector('span:last-child');if(s)s.textContent=d.classList.contains('open')?'▲':'▼';}
 function togglePanel(id,btn){const d=document.getElementById(id);if(!d)return;const isOpen=d.style.display==='block';d.style.display=isOpen?'none':'block';const s=btn.querySelector('span:last-child');if(s)s.textContent=isOpen?'▼':'▲';}
@@ -510,11 +672,11 @@ function togglePanel(id,btn){const d=document.getElementById(id);if(!d)return;co
 function exportExcel(){
   if(!girlsData.length){showToast('لا يوجد بيانات');return;}
   const wb=XLSX.utils.book_new();const sorted=[...girlsData].sort((a,b)=>b.grand-a.grand);
-  const sum=[['الترتيب','الاسم','المجموع','المعدل','الأيام','معدل اليوم %',...Array.from({length:DAYS},(_,i)=>'يوم '+(i+1))]];
+  const sum=[['الترتيب','الاسم','المجموع','الأيام','معدل اليوم %',...Array.from({length:DAYS},(_,i)=>'يوم '+(i+1))]];
   sorted.forEach((g,i)=>{
     const dp=calcGirlDayPct(g);
     const bases=Array.from({length:DAYS},(_,d)=>calcGirlDayBase(g,d+1));
-    sum.push([i+1,g.name,g.grand,g.avg,g.filled,dp!==null?dp+'%':'—',...bases]);
+    sum.push([i+1,g.name,g.grand,g.filled,dp!==null?dp+'%':'—',...bases]);
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'ملخص');
   girlsData.forEach(g=>{
@@ -537,7 +699,7 @@ loadData();
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./service-worker.js?v=2026.09.27.1').catch(function () {});
+    navigator.serviceWorker.register('./service-worker.js?v=2026.10.07.1').catch(function () {});
   });
 }
 </script>
